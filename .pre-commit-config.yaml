@@ -1,0 +1,55 @@
+repos:
+  # -----------------------------
+  # Hooks generales de limpieza
+  # -----------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: check-toml
+      - id: check-added-large-files
+        args: ["--maxkb=4096"]
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+      # Detectar archivos .env y otros archivos sensibles
+      - id: detect-private-key
+      - id: check-case-conflict
+      - id: check-json
+      - id: pretty-format-json
+        args: ["--autofix", "--no-sort-keys"]
+
+  # -----------------------------
+  # Prevenir commits directos a main.
+  # -----------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: forbid-new-submodules
+      - id: no-commit-to-branch
+        args: ["--branch", "main", "--branch", "master"]
+
+  # Hook personalizado para bloquear archivos .env.
+  - repo: local
+    hooks:
+      - id: forbid-env-files
+        name: Prevenir commits de archivos .env
+        entry: Los archivos .env no deben ser "commiteados". Usa .env.example en su lugar.
+        language: fail
+        files: '(\.env$|\.env\..+)'
+        exclude: '\.env\.example$|\.env\.template$|\.env\.sample$'
+
+  # -----------------------------
+  # Ruff: lint + format
+  # -----------------------------
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.5.7
+    hooks:
+      # Linter
+      - id: ruff
+        args:
+          - --fix
+          - --exit-non-zero-on-fix
+      - id: ruff-format

@@ -1,0 +1,12 @@
+.states
+*.db
+.web
+__pycache__/
+assets/external/
+*.py[cod]
+.ruff_cache
+.venv
+/.idea
+.DS_Store
+.env
+uv.lock
