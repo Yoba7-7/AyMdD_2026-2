@@ -1,0 +1,15 @@
+Diremos que existe una cadena minorista llamada ``\textit{Super Electronics}'' que, como su nombre dice, se dedica a comercialización de productos electrónicos de diversos tipos, como cables y adaptadores de corriente. Parecido a lo que haría una tienda como Radioshack o Steren.
+
+Super Electronics tiene un Data Warehouse diseñado para el análisis de ventas y comportamiento del cliente. Este se explica de la siguiente manera:
+
+\begin{itemize}
+
+    \item \textbf{Orientación a temas}: En lugar de que el DW se organice en torno a operaciones de la empresa como ``pedidos'', ``facturación'' o ``gestión de inventario'', su DW está estructurado en torno a los temas principales del negocio, como Cliente, Producto, Ventas y Proveedor. Así, por ejemplo, se pueden analizar las ventas por tipo de artículo y/o por sucursal.
+
+    \item \textbf{Integración de datos}: Los datos de su DW provienen de múltiples fuentes heterogéneas, es decir, de distintos sistemas tales como bases de datos relacionales, archivos planos, registros de transacciones antiguas. Estos datos se unifican para lograr tener una ``imagen corporativa única''. Esto implica limpiar y estandarizar con el fin de evitar las inconsistencias en convenciones de nomenclatura, unidades de medida y estructuras de codificación antes de almacenar los datos.
+
+    \item \textbf{Variabilidad en el tiempo}: En lugar de reflejar valores actuales, como el saldo actual de una cuenta, su DW almacena información desde una perspectiva histórica (por ejemplo, los últimos 5 a 10 años, etc.). Esto lleva a que cada estructura de clave en el almacén contenga, implícita o explícitamente, un elemento de tiempo (como día, semana, mes o año).
+
+    \item \textbf{No volatilidad}: El DW ésta pensado para solo ser consultado, no necesariamente modificado. Si ocurren cambios, se añade una nueva instantánea en lugar de sobrescribir el registro anterior, preservando así la historia de los mismos.
+
+\end{itemize}

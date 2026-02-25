@@ -1,0 +1,98 @@
+\section{Conceptos}
+
+    \begin{enumerate}
+
+        \item Da un ejemplo de Almacén de Datos (de acuerdo con tus intereses, no repetir lo visto en clase) y explica cómo se cumple la definición en tu ejemplo. Incluye:
+
+            \begin{itemize}
+                \item Orientación a temas
+                \item Integración de datos
+                \item Variabilidad en el tiempo
+                \item No volatilidad
+            \end{itemize}
+
+            \input{contenido/1.1}
+
+        \item Explica con tus propias palabras la diferencia entre un Almacén de Datos y:
+            \input{contenido/1.2}
+
+    \end{enumerate}
+
+
+\section{Escenario}
+
+    \begin{tcolorbox}[title=Contexto]
+        El Instituto de Matemáticas de la Universidad Nacional Autónoma de México desarrolla
+        y analiza modelos matemáticos mediante simulaciones numéricas, orientadas al estudio de
+        ecuaciones diferenciales, sistemas dinámicos, procesos estocásticos y métodos numéricos.
+
+        Cada ejecución de simulación genera información distribuida que se encuentra en registros del clúster, bitácoras de ejecución, archivos de resultados y reportes de uso de recursos computacionales. Actualmente, esta información no está integrada, lo que dificulta el análisis histórico y la toma de decisiones estratégicas.
+
+        Por lo anterior, el Instituto te contrata para diseñar un Almacén de Datos que permita
+        analizar el uso de recursos, el comportamiento de las simulaciones y su evolución a lo largo del tiempo.
+    \end{tcolorbox}
+
+
+    % \begin{enumerate}
+
+    %     \item Menciona qué beneficios tendrá utilizar un Almacén de Datos en un entorno de cómputo científico. Justifica.
+
+    %     \item Indica qué usuarios utilizarían este Almacén de Datos y con qué propósito. Justifica.
+
+    %     \item Escribe al menos cinco preguntas que el Instituto desearía responder en términos de análisis.
+
+    %     \item Describe qué datos históricos almacenaría el Data Warehouse del Instituto de Matemáticas y qué decisiones estratégicas apoyaría.
+
+    %     \item Define el hecho principal del modelo multidimensional.
+
+    %     \item Explica qué representa una fila en la tabla de hechos y da cinco ejemplos. Se consideran los siguientes niveles de granularidad para el hecho Ejecución de Simulación:
+
+    %         \begin{itemize}
+    %             \item Una fila por simulación científica
+    %             \item Una fila por ejecución completa de simulación
+    %             \item Una fila por paso iterativo interno
+    %         \end{itemize}
+
+    %     \item Selecciona la granularidad adecuada y justifica por qué es preferible a las demás.
+
+    %     \item Explica cuándo sería adecuada una granularidad alta y cuándo una baja, incluyendo sus ventajas y desventajas.
+
+    %     \item Dibuja el esquema estrella correspondiente al escenario. Considera que:
+
+    %         \begin{itemize}
+    %             \item Debe haber al menos cuatro medidas numéricas.
+    %             \item Deben definirse al menos cinco dimensiones, incluidas Tiempo y Simulación.
+    %             \item Deben indicarse los atributos relevantes de cada dimensión.
+    %         \end{itemize}
+
+    %     \item Describe las capas de la arquitectura de un Almacén de Datos.
+
+    %     \item Explica el rol de cada capa en el contexto del cómputo científico.
+
+    %     \item Indica dónde se implementa el modelo estrella.
+
+
+    % \end{enumerate}
+        \input{contenido/2.1}
+
+\section{Detección de errores}
+
+Plantea y describe dos errores de diseño posibles en un Almacén de Datos para el escenario anterior. Los errores no deben impedir la ejecución de consultas, pero sí producir resultados incorrectos o engañosos. Para cada error, indica:
+
+    \begin{itemize}
+        \item Un ejemplo de consulta donde el problema sea evidente.
+        \item Cómo corregirías el error (ETL o modelo). Escribe detalladamente los pasos a seguir,
+        así como tu solución.
+    \end{itemize}
+
+
+    \begin{enumerate}
+        \item \textbf{Atribución incorrecta de recursos por actualización en la dimensión}: En la dimensión Recurso se actualizan las características del hardware, en particular la RAM, sobrescribiendo el valor anterior sin guardar historial.   De esta manera al realizar la consulta ¿Cuál era el rendimiento de las simulaciones cuando los nodos tenían solo 32GB de RAM?, si todos los nodos se actualizaron a 64GB y se sobrescribió el dato, el reporte histórico asociará ejecuciones históricas con una configuración de hardware que no existía en el momento en que ocurrieron, lo cual genera una inconsistencia en los datos históricos y genera una representación distorsionada de las condiciones reales bajo las cuales se ejecutaron las simulaciones, afectando el análisis de eficiencia.
+
+        La solución a esto consiste en cambiar la dimensión Recurso a una Dimensión de variación lenta de tipo 2. Para esto agregamos las columnas fecha\_inicio, fecha\_fin y estatus, así cuando un nodo se actualice como en este caso particular la RAM, no se debe sobrescribir, en su lugar se debe cerrar el registro actual con la fecha de hoy y crear una nueva fila con la nueva configuración.
+
+        \item \textbf{Ambigüedad en la categorización de estados de salida por mapeo genérico}: En la dimensión Resultado, el proceso de ETL mapea cualquier código de salida distinto de cero como un Fallo genérico en el atributo \textit{estado}. De esta manera, al realizar la consulta ¿Cuál es la eficiencia de los modelos de Ecuaciones Diferenciales?, si el reporte muestra una alta tasa de fallos pero no distingue entre un error matemático y una interrupción por mantenimiento del clúster, el reporte histórico mostrará una baja eficiencia del modelo, lo cual genera una interpretación engañosa de la calidad del algoritmo y podría llevar a la decisión estratégica incorrecta de abandonar una investigación útil basándose en fallos de infraestructura y no de lógica.
+
+        La solución a esto consiste en ajustar la lógica de transformación en la capa de Staging para realizar un análisis de los logs de ejecución antes de la carga. Para esto, se debe reclasificar el atributo \textit{estado} en categorías específicas por ejemplo, fallo matemático, interrupción de hardware, cancelación Manual, etc. Así, el proceso ETL asignará la llave foránea correcta en la tabla de hechos, permitiendo que el Almacén de Datos refleje con precisión la causa raíz de cada evento.
+    \end{enumerate}
+

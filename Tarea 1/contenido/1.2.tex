@@ -1,0 +1,17 @@
+\begin{itemize}
+    \item Una base de datos transaccional
+
+        Un DW está diseñado para el análisis y la toma de decisiones estratégicas, organizando la información por ``temas'' (como clientes o productos, como mencionábamos en el ejercicio anterior), almacenando un historial a largo plazo. Por el contrario, una base de datos transaccional está diseñada para la operación diaria y eficiente de aplicaciones específicas, manejando datos actuales y volátiles que cambian constantemente.
+
+    \item Un esquema estrella
+
+        El DW es el repositorio corporativo completo que integra información de toda la organización, mientras que el esquema estrella es una técnica específica de modelado de datos utilizada dentro de los ``Data Marts'' para facilitar el análisis de la información contenida en el DW.
+
+    \item Un cubo OLAP
+
+        El DW almacena cantidades masivas de datos granulados con un horizonte de tiempo largo (i.e. 5 a 10 años), sirviendo como la fuente fundamental de datos. En cambio, un cubo OLAP organiza los datos del almacén de datos para que puedan analizarse más rápido, permitiendo explorarlos desde distintos puntos de vista, como por fecha, área o categoría, y facilitando las comparaciones.
+
+    \item Un Data Lake
+
+        El DW contiene datos estructurados, limpios e integrados que han pasado por un proceso de transformación para asegurar su calidad y consistencia. El Data Lake es más pensado como el \textit{intake} de datos crudos, donde se almacenan volúmenes de datos no necesariamente estructurarlos de manera previa y que no necesariamente cabrián en el DW.
+  \end{itemize}
