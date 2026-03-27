@@ -21,26 +21,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Quarto
-        uses: quarto-dev/quarto-actions/setup@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'   # or 3.10, etc.
-
-      - name: Install Jupyter
+      # Copy the presentation.html into a _site folder as index.html
+      # so that Pages serves it as the root page.
+      - name: Prepare site directory
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install jupyter nbformat pandas matplotlib seaborn numpy
-
-      - name: Render Quarto document
-        run: quarto render "Tarea 2/presentation/presentation.qmd" --execute --to html --output-dir _site
+          mkdir -p _site
+          cp "Tarea 2/presentation/presentation.html" "_site/index.html"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "Tarea 2/presentation/_site"
+          path: _site
 
   deploy:
     needs: build
