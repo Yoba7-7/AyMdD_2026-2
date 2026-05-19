@@ -1,0 +1,57 @@
+---
+title: "Detección de Outliers"
+subtitle: "Almacenes y Minería de Datos - 2026-2"
+author: "Méndez Ávila Luis Geovanni, Paredes Zamudio Luis Daniel, Sánchez Rosas Roberto Samuel"
+date: "2026-05-29"
+date-modified: today #cambiar o quitar el dia de la entrega
+# se puede agregar un resumen del documento aquí con "summary"
+bibliography: "references.bib"
+format:
+    html:
+        lang: "es"
+        citeproc: true
+        citations-hover : true
+        citation-location: document
+        include-after-body: "footer.html"
+        theme: "nord.scss"
+        html-math-method: katex
+        code-fold: true
+        code-summary: "Mostrar código"
+        code-block-border-left: true
+        code-line-numbers: true
+        code-copy: true
+        code-link: true
+        syntax-highlighting: nord
+        toc: true
+        toc-depth: 3
+        toc-title: "Contenido del Documento"
+        toc-location: right
+        fig-align: center
+        smooth-scroll: true
+        number-sections: false
+        number-depth: 3
+        code-links:
+            - text: "Código en GitHub"
+              href: "https://github.com/wallsified/AyMdD_2026-2"
+              icon: "github"
+---
+
+# Work in Progress
+
+aqui aun no hay nada, solo testeando configuración
+
+```{python}
+print("Hello, World!")
+```
+
+y segun esto, para poner en latex solo lo ponemos así
+
+$$E = mc^2$$
+
+y haces citas haciendo esto (@knuth84), suponiendo que la clave de la referencia
+está en `references.bib`
+
+### Referencias
+
+::: {#refs}
+:::
