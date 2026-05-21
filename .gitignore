@@ -38,5 +38,9 @@ iframe_figures
 Tarea 2/dataset/tot_reg_desap_modificado.csv
 Tarea 2/dataset/tot_reg_desap.csv
 
-/.quarto/
-/_site/
+.quarto/
+_site/
+_book
+_extensions/
+datasets/
+**/*.quarto_ipynb

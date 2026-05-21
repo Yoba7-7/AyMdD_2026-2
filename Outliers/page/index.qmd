@@ -1,51 +1,3 @@
----
-title: "Detección de Outliers"
-subtitle: "Almacenes y Minería de Datos - 2026-2"
-author: "Méndez Ávila Luis Geovanni, Paredes Zamudio Luis Daniel, Sánchez Rosas Roberto Samuel"
-date: "2026-05-29"
-date-modified: today # cambiar o quitar el dia de la entrega
-# se puede agregar un resumen del documento aquí con "summary"
-
-bibliography: "references.bib"
-nocite: |
-  @*
-lang: "es"
-theme: "nord.scss"
-
-format:
-  html:
-
-    citeproc: true
-    citations-hover: true
-    citation-location: document
-    include-after-body: "footer.html"
-    html-math-method: katex
-    code-fold: true
-    code-summary: "Mostrar código"
-    code-block-border-left: true
-    code-line-numbers: true
-    code-copy: true
-    code-link: true
-    syntax-highlighting: nord
-    toc: true
-    toc-depth: 3
-    toc-title: "Contenido del Documento"
-    toc-location: right
-    fig-align: center
-    smooth-scroll: true
-    number-sections: false
-    number-depth: 3
-    code-links:
-      - text: "Código en GitHub"
-        href: "https://github.com/wallsified/AyMdD_2026-2"
-        icon: "github"
-
-  pdf: default
-
-  ipynb: default
----
-
-
 # ¿Qué es un Outlier?
 
 Un outlier, o un _dato atípico_, es un objeto que tiene características diferentes de la mayoria de
@@ -136,8 +88,15 @@ el algoritmo puede agrupar en "compradores frecuentes", "compradores nuevos", "c
 artículo", etc. Y en base a estas métricas el supermercado puede encontrar patrones de los artículos más
 vendidos, etc.
 
-
 ## K-Means
+
+### Caso de Uso
+
+```python {.marimo}
+import marimo as mo
+slider = mo.ui.slider(1, 10, 1, label="Look, a slider!")
+slider
+```
 
 ## DBSCAN
 
