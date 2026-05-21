@@ -36,14 +36,14 @@ Esto abrirá la interfaz web en el puerto 8888. Favor de referirse al documento 
 
 ### pre-commit
 
-Se usa una configuración de pre-commit que se ejecuta antes de cada commit de manera automática. Esto para prevenir incluir archivos `.env`, archivos pesados, ejecución de linter (`ruff`), etc. 
+Se usa una configuración de pre-commit que se ejecuta antes de cada commit de manera automática. Esto para prevenir incluir archivos `.env`, archivos pesados, ejecución de linter (`ruff`), etc.
 
 Para activarla se hace lo siguiente:
 
 ```bash
 pre-commit install
 ```
-Se activa de manera automática tras cada `git commit`. 
+Se activa de manera automática tras cada `git commit`.
 
 > [!NOTE]
 > Es posible la instalación y ejecución de las dependencias y configuraciones usando métodos tradicionales como `pip`, simplemente se recomienda usar las configuraciones mencionadas para mayor velocidad.
@@ -59,5 +59,5 @@ quarto preview presentation.qmd
 ```
 
 > [!NOTE]
-> La presentación y archivos que se encuentran en la carpeta raiz de este repositorio para revisar 
+> La presentación y archivos que se encuentran en la carpeta raiz de este repositorio para revisar
 > alguna en particular es necesario entrar a la carpeta de cada tarea y ejecutar el comando mencionado.

@@ -39,12 +39,14 @@ format:
       - text: "Código en GitHub"
         href: "https://github.com/wallsified/AyMdD_2026-2"
         icon: "github"
+
   pdf: default
+
   ipynb: default
 ---
 
 
-# ¿Qué es un Outlier"?
+# ¿Qué es un Outlier?
 
 Un outlier, o un _dato atípico_, es un objeto que tiene características diferentes de la mayoria de
 otros del dataset con el que estemos trabajando. También puede ser un valor inusual con respecto
@@ -64,7 +66,7 @@ su precisión y/o comprometer su interpretabilidad.
 Sin embargo la decisión de cómo manejar un outlier debe precederse por una investigación sobre _por
 qué existe_. Si un outlier es claramente el resultado de un error su eliminación o corrección es
 justificada. Sin embargo, si el outlier representa un evento genuino y válido, pero tal vez menos probable,
-debe ser considerado cuidadosamente o incluso aprovechado para obtener información valiosa.
+debe ser considerado cuidadosamente o incluso aprovechado para obtener información valiosa. @Pontia_2026
 
 ## Outliers y Ruido
 
@@ -92,6 +94,56 @@ Como su nombre lo dice, son eventos que aunque de manera individual no parecen s
 si representan una anomalía. Por ejemplo, el rechazo de envío de un paquete de una computadora a otra se
 considera normal, pero si varias computadoras continúan enviando paquetes rechazados unas a otras, el
 conjunto se debería considerar como outlier colectivo. @MineriaDatos_R
+
+
+# Algoritmos de Clustering
+
+## ¿Qué signfica _clustering_?
+
+El clustering es una técnica de aprendizaje automático no supervisado que busca dividir el dataset
+en el que se este trabajando en grupos, a los que llamaremos *_clústers_*, en donde los elementos
+que se encuentran dentro de uno son lo más similares entre si y lo más distintos posibles o los de
+otro clúster.
+
+Como es un método no supervizado no se necesita que los datos tengan etiquetas, clasificaciones
+previas o ejemplos de entrenamiento, si no que más bien lo que se busca es encontrar la distancia
+matemática (o similitud) entre cada dato para agruparlos lo más correctamente posible.
+
+## ¿De qué nos sirven los clústers?
+
+- Descubrir patrones ocultos: Ayuda a revelar relaciones, estructuras y agrupaciones naturales dentro
+de los datos que no son evidentes a simple vista.
+- Simplificar información compleja: Permite dividir y resumir grandes volúmenes de datos ruidosos en
+subgrupos más pequeños, homogéneos y manejables.
+- Exploración y descubrimiento: Es sumamente útil para encontrar grupos de datos o categorías que eran
+previamente desconocidas por los analistas.
+
+## Términos Generales de los Algoritmos de Clústering
+
+1. El algoritmo evalúa cada registro del conjunto de datos tomando en cuenta sus características como
+si fueran coordenadas de un punto en el espacio.
+2. Luego, usamos métricas (como la distancia euclídea o la correlación) para medir qué tan cerca están
+esos puntos unos de otros
+3. Con base en esta proximidad, el algoritmo asocia los puntos de modo que se minimice la distancia entre
+los elementos de un mismo grupo (haciéndolos muy compactos y similares) y se maximice la separación con los
+demás grupos.
+
+### Ejemplo Corto
+
+Digamos que tenemos un dataset de compras de un supermercado. Cada entrada en el conjunto se refiere a
+lo que compra una persona y queremos detectar grupos basados en clustering en base a esos datos. Entonces
+el algoritmo puede agrupar en "compradores frecuentes", "compradores nuevos", "compradores de un solo
+artículo", etc. Y en base a estas métricas el supermercado puede encontrar patrones de los artículos más
+vendidos, etc.
+
+
+## K-Means
+
+## DBSCAN
+
+Sus siglas significan "Density-Based Spatial Clustering of Applications with Noise", lo que se traduce
+a _agrupamiento espacial basado en densidad de aplicaciones con ruido_. Es un algoritmo creado por
+Martin Ester, Hans-Peter Kriegel, Jörg Sander y Xiaowei Xu en 1996.
 
 
 ### Referencias
