@@ -28,11 +28,12 @@ data_secretariado.csv
 # quatro config files
 presentation_files/
 presentation.quarto_*
-
+document_files/
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 iframe_figures
+*_ipynb*
 
 Tarea 2/dataset/tot_reg_desap_modificado.csv
 Tarea 2/dataset/tot_reg_desap.csv

@@ -1,0 +1,152 @@
+---
+title: "Detección de Outliers"
+subtitle: "Almacenes y Minería de Datos - 2026-2"
+author: "Méndez Ávila Luis Geovanni, Paredes Zamudio Luis Daniel, Sánchez Rosas Roberto Samuel"
+date: "2026-05-29"
+date-modified: today # cambiar o quitar el dia de la entrega
+# se puede agregar un resumen del documento aquí con "summary"
+
+bibliography: "references.bib"
+nocite: |
+  @*
+lang: "es"
+theme: "nord.scss"
+
+format:
+  html:
+
+    citeproc: true
+    citations-hover: true
+    citation-location: document
+    include-after-body: "footer.html"
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Mostrar código"
+    code-block-border-left: true
+    code-line-numbers: true
+    code-copy: true
+    code-link: true
+    syntax-highlighting: nord
+    toc: true
+    toc-depth: 3
+    toc-title: "Contenido del Documento"
+    toc-location: right
+    fig-align: center
+    smooth-scroll: true
+    number-sections: false
+    number-depth: 3
+    code-links:
+      - text: "Código en GitHub"
+        href: "https://github.com/wallsified/AyMdD_2026-2"
+        icon: "github"
+
+  pdf: default
+
+  ipynb: default
+---
+
+
+# ¿Qué es un Outlier?
+
+Un outlier, o un _dato atípico_, es un objeto que tiene características diferentes de la mayoria de
+otros del dataset con el que estemos trabajando. También puede ser un valor inusual con respecto
+a los valores típicos de una variable. Por ejemplo, si tenemos un dataset con la información de la altura
+de un grupo de personas, y el promedio es de 1.80 metros, un outlier sería ver un valor de 2.15 metros.
+
+La naturaleza de los outliers es dual, así como pueden ser el resultado de errores de medición o entrada
+de datos, también pueden representar eventos geniunos pero poco frencuentes que aún nos pueden dar
+información valiosa del conjunto de datos. @Munoz_outliers
+
+## ¿Por qué es importante detectar los outliers?
+
+Si estos valores no se identifican ni procesan de una manera adecuada perjudica considerablemente
+los análisis estadísticos que se hagan de nuestros datos, ya que puede sesgar el modelos, reducir
+su precisión y/o comprometer su interpretabilidad.
+
+Sin embargo la decisión de cómo manejar un outlier debe precederse por una investigación sobre _por
+qué existe_. Si un outlier es claramente el resultado de un error su eliminación o corrección es
+justificada. Sin embargo, si el outlier representa un evento genuino y válido, pero tal vez menos probable,
+debe ser considerado cuidadosamente o incluso aprovechado para obtener información valiosa. @Pontia_2026
+
+## Outliers y Ruido
+
+Algo que vale la pena recalcar es que un outlier *no es lo mismo que el ruido*. Mientras que el ruido
+son datos incorrectos o inconsistentes que restan la calidad del modelo que se vaya a crear, un outlier
+es más un valor que es posible pero muy poco frecuente.
+
+# Categorización de Outliers
+
+## Outliers Globales
+
+Son los outliers menos específicos. Son eventos que se desvían significativamente del resto del
+dataset. Por ejemplo, un conjunto de datos de edad de personas en una empresa y un dato anómalo de
+150 años.
+
+## Outliers Contextuales
+
+Estos eventos se consideran atípicos según el contexto específico bajo el que se vayan a tratar.
+Por ejemplo, si nuestro dataset es sobre temperaturas en un estado a lo largo del año, un valor
+de 30°C es normal en verano, pero atípico en invierno.
+
+## Outliers Colectivos
+
+Como su nombre lo dice, son eventos que aunque de manera individual no parecen ser anómalos, en conjunto
+si representan una anomalía. Por ejemplo, el rechazo de envío de un paquete de una computadora a otra se
+considera normal, pero si varias computadoras continúan enviando paquetes rechazados unas a otras, el
+conjunto se debería considerar como outlier colectivo. @MineriaDatos_R
+
+
+# Algoritmos de Clustering
+
+## ¿Qué signfica _clustering_?
+
+El clustering es una técnica de aprendizaje automático no supervisado que busca dividir el dataset
+en el que se este trabajando en grupos, a los que llamaremos *_clústers_*, en donde los elementos
+que se encuentran dentro de uno son lo más similares entre si y lo más distintos posibles o los de
+otro clúster.
+
+Como es un método no supervizado no se necesita que los datos tengan etiquetas, clasificaciones
+previas o ejemplos de entrenamiento, si no que más bien lo que se busca es encontrar la distancia
+matemática (o similitud) entre cada dato para agruparlos lo más correctamente posible.
+
+## ¿De qué nos sirven los clústers?
+
+- Descubrir patrones ocultos: Ayuda a revelar relaciones, estructuras y agrupaciones naturales dentro
+de los datos que no son evidentes a simple vista.
+- Simplificar información compleja: Permite dividir y resumir grandes volúmenes de datos ruidosos en
+subgrupos más pequeños, homogéneos y manejables.
+- Exploración y descubrimiento: Es sumamente útil para encontrar grupos de datos o categorías que eran
+previamente desconocidas por los analistas.
+
+## Términos Generales de los Algoritmos de Clústering
+
+1. El algoritmo evalúa cada registro del conjunto de datos tomando en cuenta sus características como
+si fueran coordenadas de un punto en el espacio.
+2. Luego, usamos métricas (como la distancia euclídea o la correlación) para medir qué tan cerca están
+esos puntos unos de otros
+3. Con base en esta proximidad, el algoritmo asocia los puntos de modo que se minimice la distancia entre
+los elementos de un mismo grupo (haciéndolos muy compactos y similares) y se maximice la separación con los
+demás grupos.
+
+### Ejemplo Corto
+
+Digamos que tenemos un dataset de compras de un supermercado. Cada entrada en el conjunto se refiere a
+lo que compra una persona y queremos detectar grupos basados en clustering en base a esos datos. Entonces
+el algoritmo puede agrupar en "compradores frecuentes", "compradores nuevos", "compradores de un solo
+artículo", etc. Y en base a estas métricas el supermercado puede encontrar patrones de los artículos más
+vendidos, etc.
+
+
+## K-Means
+
+## DBSCAN
+
+Sus siglas significan "Density-Based Spatial Clustering of Applications with Noise", lo que se traduce
+a _agrupamiento espacial basado en densidad de aplicaciones con ruido_. Es un algoritmo creado por
+Martin Ester, Hans-Peter Kriegel, Jörg Sander y Xiaowei Xu en 1996.
+
+
+### Referencias
+
+::: {#refs}
+:::

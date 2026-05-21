@@ -1,0 +1,520 @@
+/*-- scss:defaults --*/
+// quarto-scss-analysis-annotation { "origin": "nord (custom theme)" }
+
+$theme: "nord" !default;
+
+//
+// Nord Color Palette
+//
+
+// Nord Polar Night (Background colors)
+$nord0:    #2e3440 !default;
+$nord1:    #3b4252 !default;
+$nord2:    #434c5e !default;
+$nord3:    #4c566a !default;
+
+// Nord Snow Storm (Foreground colors)
+$nord4:    #d8dee9 !default;
+$nord5:    #e5e9f0 !default;
+$nord6:    #eceff4 !default;
+
+// Nord Frost (Accent colors - blue/cyan)
+$nord7:    #8fbcbb !default;
+$nord8:    #88c0d0 !default;
+$nord9:    #81a1c1 !default;
+$nord10:   #5e81ac !default;
+
+// Nord Aurora (Alert colors)
+$nord11:   #bf616a !default;
+$nord12:   #d08770 !default;
+$nord13:   #ebcb8b !default;
+$nord14:   #a3be8c !default;
+$nord15:   #b48ead !default;
+
+//
+// Standard Color System (mapped to Nord)
+//
+
+$white:    $nord6 !default;
+$gray-100: $nord5 !default;
+$gray-200: $nord4 !default;
+$gray-300: $nord3 !default;
+$gray-400: $nord2 !default;
+$gray-500: $nord1 !default;
+$gray-600: $nord0 !default;
+$gray-700: #2a2e39 !default;
+$gray-800: #242933 !default;
+$gray-900: #1e222d !default;
+$black:    #000 !default;
+
+$blue:    $nord8 !default;
+$indigo:  $nord10 !default;
+$purple:  $nord15 !default;
+$pink:    $nord15 !default;
+$red:     $nord11 !default;
+$orange:  $nord12 !default;
+$yellow:  $nord13 !default;
+$green:   $nord14 !default;
+$teal:    $nord7 !default;
+$cyan:    $nord8 !default;
+
+// Body
+$body-bg: $nord0 !default;
+$body-color: $nord4 !default;
+
+@function body-mix($weight) {
+  @return mix($body-bg, $body-color, $weight);
+}
+
+$contrast-bg: color-contrast($body-bg) !default;
+$contrast-fg: color-contrast($contrast-bg) !default;
+
+$primary:       $nord8 !default;
+$secondary:     body-mix(70%) !default;
+$success:       $nord14 !default;
+$info:          $nord8 !default;
+$warning:       $nord13 !default;
+$danger:        $nord11 !default;
+$light:         body-mix(40%) !default;
+$dark:          body-mix(75%) !default;
+
+$min-contrast-ratio:   1.6 !default;
+
+// Components
+
+$border-radius:               4px !default;
+$border-radius-lg:            6px !default;
+$border-radius-sm:            2px !default;
+
+// Fonts
+
+// stylelint-disable-next-line value-keyword-case
+$font-family-sans-serif:      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
+
+$text-muted:                  rgba($nord4, .6) !default;
+
+// Tables
+
+$table-accent-bg:             rgba($nord8, .05) !default;
+$table-hover-bg:              rgba($nord8, .1) !default;
+$table-border-color:          rgba($nord3, .3) !default;
+$table-head-bg:               $nord2 !default;
+$table-dark-bg:               $nord2 !default;
+$table-dark-border-color:     $nord3 !default;
+$table-dark-color:            $nord6 !default;
+
+$table-bg-scale:              0% !default;
+
+// Forms
+
+$input-bg:                          $nord1 !default;
+$input-disabled-color:              $nord3 !default;
+$input-disabled-bg:                 $nord2 !default;
+
+$input-color:                       $nord4 !default;
+$input-border-color:                $nord3 !default;
+$input-border-width:                1px !default;
+
+$input-placeholder-color:               rgba($nord4, .5) !default;
+
+$input-group-addon-color:           $nord4 !default;
+$input-group-addon-bg:              $nord2 !default;
+
+$form-select-disabled-bg:           $input-disabled-bg !default;
+$form-select-disabled-color:        $input-disabled-color !default;
+
+$form-check-input-bg:                     $nord1 !default;
+$form-check-input-border:                 1px solid $nord3 !default;
+
+$form-file-button-color:          $input-group-addon-color !default;
+$form-file-button-bg:             $input-group-addon-bg !default;
+$form-file-button-hover-bg:       lighten($form-file-button-bg, 8%) !default;
+
+$form-floating-label-opacity:     0.95 !default;
+
+// Dropdowns
+
+$dropdown-bg:                       $nord1 !default;
+$dropdown-divider-bg:               rgba($nord3, .5) !default;
+$dropdown-link-color:               $nord4 !default;
+$dropdown-link-hover-color:         $nord6 !default;
+$dropdown-link-hover-bg:            $nord8 !default;
+
+// Navs
+
+$nav-link-disabled-color:           rgba($nord4, .4) !default;
+$nav-tabs-border-color:             $nord3 !default;
+$nav-tabs-link-active-color:        $nord8 !default;
+$nav-tabs-link-active-border-color: $nord8 !default;
+
+// Navbar
+
+$navbar-dark-color:                 rgba($nord4, .7) !default;
+$navbar-dark-hover-color:           $nord6 !default;
+$navbar-dark-active-color:          $nord8 !default;
+
+// Pagination
+
+$pagination-color:                  $nord4 !default;
+$pagination-bg:                     $nord2 !default;
+$pagination-border-color:           $nord3 !default;
+$pagination-hover-color:            $nord6 !default;
+$pagination-hover-bg:               $nord8 !default;
+$pagination-hover-border-color:     $nord8 !default;
+$pagination-disabled-color:         $nav-link-disabled-color !default;
+$pagination-disabled-bg:            $nord1 !default;
+$pagination-disabled-border-color:  $nord3 !default;
+
+// Cards
+
+$card-cap-bg:                       $nord2 !default;
+$card-bg:                           $nord1 !default;
+$card-border-color:                 $nord3 !default;
+$card-inner-border-radius:          $border-radius !default;
+
+// Accordion
+
+$accordion-bg:                            $nord1 !default;
+$accordion-border-color:                  $nord3 !default;
+$accordion-border-width:                  1px !default;
+$accordion-button-bg:                     $nord2 !default;
+$accordion-button-active-bg:              $nord8 !default;
+$accordion-button-active-color:           $body-bg !default;
+
+// Popovers
+
+$popover-bg:                        $nord1 !default;
+$popover-header-bg:                 $nord2 !default;
+$popover-border-color:              $nord3 !default;
+
+// Toasts
+
+$toast-background-color:            $nord1 !default;
+$toast-border-color:                $nord3 !default;
+$toast-header-color:                $nord4 !default;
+$toast-header-background-color:     $nord2 !default;
+$toast-header-border-color:         $nord3 !default;
+
+// Modals
+
+$modal-content-bg:                  $nord1 !default;
+$modal-header-border-color:         $nord3 !default;
+$modal-footer-border-color:         $nord3 !default;
+
+// Progress bars
+
+$progress-bg:                       $nord2 !default;
+$progress-bar-bg:                   $nord8 !default;
+
+// List group
+
+$list-group-color:                  $nord4 !default;
+$list-group-bg:                     $nord1 !default;
+$list-group-border-color:           $nord3 !default;
+$list-group-hover-bg:               $nord2 !default;
+$list-group-disabled-color:         rgba($nord4, .5) !default;
+$list-group-action-color:           $nord4 !default;
+$list-group-action-hover-color:     $nord6 !default;
+
+// Breadcrumbs
+
+$breadcrumb-padding-y:              .375rem !default;
+$breadcrumb-padding-x:              .75rem !default;
+$breadcrumb-bg:                     $nord2 !default;
+$breadcrumb-divider-color:          $nord3 !default;
+$breadcrumb-active-color:           $nord8 !default;
+
+// Close
+
+$btn-close-color:            $nord4 !default;
+$btn-close-opacity:          .6 !default;
+$btn-close-hover-opacity:    1 !default;
+
+// Code
+
+$pre-bg:                            $nord2 !default;
+$pre-color:                         $nord4 !default;
+$pre-border-color:                  $nord3 !default;
+
+$code-color:                        $nord13 !default;
+$code-bg:                           $nord2 !default;
+
+
+
+/*-- scss:rules --*/
+
+
+// Variables
+
+$web-font-path: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" !default;
+@if $web-font-path {
+  @import url($web-font-path);
+}
+
+// Buttons
+
+.btn {
+  border-radius: $border-radius;
+  font-weight: 600;
+
+  @each $color, $value in $theme-colors {
+    &-#{$color} {
+      @if $enable-gradients {
+        background: $value linear-gradient(180deg, lighten($value, 8%), $value) repeat-x;
+        border-color: darken($value, 5%);
+      } @else {
+        background-color: $value;
+        border-color: darken($value, 5%);
+      }
+
+      &:hover {
+        background-color: lighten($value, 5%);
+        border-color: darken($value, 8%);
+      }
+    }
+  }
+}
+
+// Typography
+
+.dropdown-menu {
+  font-size: $font-size-sm;
+  border-radius: $border-radius;
+}
+
+.dropdown-header {
+  font-size: $font-size-sm;
+  color: $nord3;
+  font-weight: 600;
+}
+
+.blockquote-footer {
+  color: $nord3;
+}
+
+.text-muted {
+  color: $text-muted;
+}
+
+// Tables
+
+.table {
+  font-size: $font-size-sm;
+
+  .thead-dark th {
+    color: $nord6;
+    background-color: $table-head-bg;
+  }
+
+  a:not(.btn) {
+    color: $nord8;
+    text-decoration: underline;
+
+    &:hover {
+      color: lighten($nord8, 10%);
+    }
+  }
+
+  .dropdown-menu a {
+    text-decoration: none;
+  }
+
+  .text-muted {
+    color: $text-muted;
+  }
+}
+
+// Forms
+
+label,
+.radio label,
+.checkbox label,
+.help-block {
+  font-size: $font-size-sm;
+  color: $nord4;
+}
+
+.form-control {
+  &:focus {
+    border-color: $nord8;
+    box-shadow: 0 0 0 0.2rem rgba($nord8, .25);
+  }
+}
+
+.form-floating {
+  > label,
+  > .form-control:focus ~ label,
+  > .form-control:not(:placeholder-shown) ~ label {
+    color: $nord3;
+  }
+}
+
+// Navs
+
+.nav-tabs,
+.nav-pills {
+  .nav-link,
+  .nav-link:hover {
+    color: $nord4;
+  }
+
+  .nav-link.disabled {
+    color: $nav-link-disabled-color;
+  }
+
+  .nav-link.active {
+    color: $nord8;
+    background-color: transparent;
+    border-bottom-color: $nord8;
+  }
+}
+
+.page-link:hover,
+.page-link:focus {
+  color: $body-bg;
+  background-color: $nord8;
+  text-decoration: none;
+  border-color: $nord8;
+}
+
+// Indicators
+
+.alert {
+  color: $nord6;
+  border: 1px solid;
+  border-radius: $border-radius;
+
+  a,
+  .alert-link {
+    color: $nord6;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  @each $color, $value in $theme-colors {
+    &-#{$color} {
+      background-color: rgba($value, .15);
+      border-color: $value;
+      color: lighten($value, 10%);
+
+      a,
+      .alert-link {
+        color: lighten($value, 10%);
+      }
+    }
+  }
+}
+
+.badge {
+  padding: 0.35rem 0.65rem;
+  font-weight: 600;
+  border-radius: $border-radius-sm;
+
+  &-warning {
+    color: $body-bg;
+    background-color: $nord13;
+  }
+
+  &-info {
+    color: $body-bg;
+    background-color: $nord8;
+  }
+}
+
+.tooltip {
+  --bs-tooltip-bg: #{$nord2};
+  --bs-tooltip-color: #{$nord4};
+  --bs-tooltip-border-radius: #{$border-radius};
+}
+
+// Popovers
+
+.popover {
+  border-color: $nord3;
+  border-radius: $border-radius;
+
+  .popover-header {
+    background-color: $nord2;
+    border-bottom-color: $nord3;
+    color: $nord6;
+    font-weight: 600;
+  }
+
+  .popover-body {
+    color: $nord4;
+  }
+}
+
+// Containers
+
+.modal {
+  &-header,
+  &-footer {
+    background-color: $nord2;
+    border-color: $nord3;
+  }
+
+  &-content {
+    border-radius: $border-radius-lg;
+  }
+}
+
+// Code highlighting
+
+code {
+  color: $nord13;
+  background-color: $nord2;
+  padding: 0.25rem 0.5rem;
+  border-radius: $border-radius-sm;
+  font-size: 0.875em;
+}
+
+pre {
+  background-color: $nord2;
+  border: 1px solid $nord3;
+  border-radius: $border-radius;
+  padding: 1rem;
+  color: $nord4;
+
+  code {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+    border-radius: 0;
+  }
+}
+
+/* Footer en 2 columnas: imagen izquierda, texto derecha */
+.amd-footer {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 1rem;
+
+  /* opcional: estética */
+  margin-top: 2rem;
+  padding: 1rem 0;
+  border-top: 1px solid rgba($nord3, 0.6);
+}
+
+.amd-footer img {
+  display: block;
+  width: 250px;      /* coincide con tu HTML */
+  max-width: 100%;   /* responsive */
+  height: auto;      /* evita deformación */
+}
+
+.amd-footer-txt {
+  text-align: left;
+  line-height: 1.25rem;
+}
+
+/* Opcional: en pantallas chicas apila */
+@media (max-width: 576px) {
+  .amd-footer {
+    grid-template-columns: 1fr;
+    row-gap: 0.75rem;
+  }
+}
+
+// quarto-scss-analysis-annotation { "origin": null }

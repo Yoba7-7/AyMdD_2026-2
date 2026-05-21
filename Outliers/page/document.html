@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.35">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Méndez Ávila Luis Geovanni, Paredes Zamudio Luis Daniel, Sánchez Rosas Roberto Samuel">
+
+<title>Detección de Outliers</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="document_files/libs/clipboard/clipboard.min.js"></script>
+<script src="document_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="document_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="document_files/libs/quarto-html/popper.min.js"></script>
+<script src="document_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="document_files/libs/quarto-html/anchor.min.js"></script>
+<link href="document_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="document_files/libs/quarto-html/quarto-syntax-highlighting-dark-6429fa8ad5f20ae2e04e859bb353eb37.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="document_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="document_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="document_files/libs/bootstrap/bootstrap-6317697291e9624e19ea5e8d60d9191d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contenido del Documento</h2>
+
+  <ul>
+  <li><a href="#qué-es-un-outlier" id="toc-qué-es-un-outlier" class="nav-link active" data-scroll-target="#qué-es-un-outlier">¿Qué es un Outlier?</a>
+  <ul class="collapse">
+  <li><a href="#por-qué-es-importante-detectar-los-outliers" id="toc-por-qué-es-importante-detectar-los-outliers" class="nav-link" data-scroll-target="#por-qué-es-importante-detectar-los-outliers">¿Por qué es importante detectar los outliers?</a></li>
+  <li><a href="#outliers-y-ruido" id="toc-outliers-y-ruido" class="nav-link" data-scroll-target="#outliers-y-ruido">Outliers y Ruido</a></li>
+  </ul></li>
+  <li><a href="#categorización-de-outliers" id="toc-categorización-de-outliers" class="nav-link" data-scroll-target="#categorización-de-outliers">Categorización de Outliers</a>
+  <ul class="collapse">
+  <li><a href="#outliers-globales" id="toc-outliers-globales" class="nav-link" data-scroll-target="#outliers-globales">Outliers Globales</a></li>
+  <li><a href="#outliers-contextuales" id="toc-outliers-contextuales" class="nav-link" data-scroll-target="#outliers-contextuales">Outliers Contextuales</a></li>
+  <li><a href="#outliers-colectivos" id="toc-outliers-colectivos" class="nav-link" data-scroll-target="#outliers-colectivos">Outliers Colectivos</a></li>
+  </ul></li>
+  <li><a href="#algoritmos-de-clustering" id="toc-algoritmos-de-clustering" class="nav-link" data-scroll-target="#algoritmos-de-clustering">Algoritmos de Clustering</a>
+  <ul class="collapse">
+  <li><a href="#qué-signfica-clustering" id="toc-qué-signfica-clustering" class="nav-link" data-scroll-target="#qué-signfica-clustering">¿Qué signfica <em>clustering</em>?</a></li>
+  <li><a href="#de-qué-nos-sirven-los-clústers" id="toc-de-qué-nos-sirven-los-clústers" class="nav-link" data-scroll-target="#de-qué-nos-sirven-los-clústers">¿De qué nos sirven los clústers?</a></li>
+  <li><a href="#términos-generales-de-los-algoritmos-de-clústering" id="toc-términos-generales-de-los-algoritmos-de-clústering" class="nav-link" data-scroll-target="#términos-generales-de-los-algoritmos-de-clústering">Términos Generales de los Algoritmos de Clústering</a>
+  <ul class="collapse">
+  <li><a href="#ejemplo-corto" id="toc-ejemplo-corto" class="nav-link" data-scroll-target="#ejemplo-corto">Ejemplo Corto</a></li>
+  </ul></li>
+  <li><a href="#k-means" id="toc-k-means" class="nav-link" data-scroll-target="#k-means">K-Means</a></li>
+  <li><a href="#dbscan" id="toc-dbscan" class="nav-link" data-scroll-target="#dbscan">DBSCAN</a>
+  <ul class="collapse">
+  <li><a href="#referencias" id="toc-referencias" class="nav-link" data-scroll-target="#referencias">Referencias</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Otros formatos</h2><ul><li><a href="document.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li><li><a href="document.ipynb" download="document.ipynb"><i class="bi bi-journal-code"></i>Jupyter</a></li></ul></div><div class="quarto-code-links"><h2>Enlaces de código</h2><ul><li><a href="https://github.com/wallsified/AyMdD_2026-2"><i class="bi bi-github"></i>Código en GitHub</a></li></ul></div></nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Detección de Outliers</h1>
+<p class="subtitle lead">Almacenes y Minería de Datos - 2026-2</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Autor/a</div>
+    <div class="quarto-title-meta-contents">
+             <p>Méndez Ávila Luis Geovanni, Paredes Zamudio Luis Daniel, Sánchez Rosas Roberto Samuel </p>
+          </div>
+  </div>
+
+    <div>
+    <div class="quarto-title-meta-heading">Fecha de publicación</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">29 de mayo de 2026</p>
+    </div>
+  </div>
+
+    <div>
+    <div class="quarto-title-meta-heading">Fecha de última modificación</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">20 de mayo de 2026</p>
+    </div>
+  </div>
+
+  </div>
+
+
+
+</header>
+
+
+<section id="qué-es-un-outlier" class="level1">
+<h1>¿Qué es un Outlier?</h1>
+<p>Un outlier, o un <em>dato atípico</em>, es un objeto que tiene características diferentes de la mayoria de otros del dataset con el que estemos trabajando. También puede ser un valor inusual con respecto a los valores típicos de una variable. Por ejemplo, si tenemos un dataset con la información de la altura de un grupo de personas, y el promedio es de 1.80 metros, un outlier sería ver un valor de 2.15 metros.</p>
+<p>La naturaleza de los outliers es dual, así como pueden ser el resultado de errores de medición o entrada de datos, también pueden representar eventos geniunos pero poco frencuentes que aún nos pueden dar información valiosa del conjunto de datos. <span class="citation" data-cites="Munoz_outliers">Munoz (<a href="#ref-Munoz_outliers" role="doc-biblioref">2025</a>)</span></p>
+<section id="por-qué-es-importante-detectar-los-outliers" class="level2">
+<h2 class="anchored" data-anchor-id="por-qué-es-importante-detectar-los-outliers">¿Por qué es importante detectar los outliers?</h2>
+<p>Si estos valores no se identifican ni procesan de una manera adecuada perjudica considerablemente los análisis estadísticos que se hagan de nuestros datos, ya que puede sesgar el modelos, reducir su precisión y/o comprometer su interpretabilidad.</p>
+<p>Sin embargo la decisión de cómo manejar un outlier debe precederse por una investigación sobre <em>por qué existe</em>. Si un outlier es claramente el resultado de un error su eliminación o corrección es justificada. Sin embargo, si el outlier representa un evento genuino y válido, pero tal vez menos probable, debe ser considerado cuidadosamente o incluso aprovechado para obtener información valiosa. <span class="citation" data-cites="Pontia_2026"><span>«Clustering»</span> (<a href="#ref-Pontia_2026" role="doc-biblioref">2026</a>)</span></p>
+</section>
+<section id="outliers-y-ruido" class="level2">
+<h2 class="anchored" data-anchor-id="outliers-y-ruido">Outliers y Ruido</h2>
+<p>Algo que vale la pena recalcar es que un outlier <em>no es lo mismo que el ruido</em>. Mientras que el ruido son datos incorrectos o inconsistentes que restan la calidad del modelo que se vaya a crear, un outlier es más un valor que es posible pero muy poco frecuente.</p>
+</section>
+</section>
+<section id="categorización-de-outliers" class="level1">
+<h1>Categorización de Outliers</h1>
+<section id="outliers-globales" class="level2">
+<h2 class="anchored" data-anchor-id="outliers-globales">Outliers Globales</h2>
+<p>Son los outliers menos específicos. Son eventos que se desvían significativamente del resto del dataset. Por ejemplo, un conjunto de datos de edad de personas en una empresa y un dato anómalo de 150 años.</p>
+</section>
+<section id="outliers-contextuales" class="level2">
+<h2 class="anchored" data-anchor-id="outliers-contextuales">Outliers Contextuales</h2>
+<p>Estos eventos se consideran atípicos según el contexto específico bajo el que se vayan a tratar. Por ejemplo, si nuestro dataset es sobre temperaturas en un estado a lo largo del año, un valor de 30°C es normal en verano, pero atípico en invierno.</p>
+</section>
+<section id="outliers-colectivos" class="level2">
+<h2 class="anchored" data-anchor-id="outliers-colectivos">Outliers Colectivos</h2>
+<p>Como su nombre lo dice, son eventos que aunque de manera individual no parecen ser anómalos, en conjunto si representan una anomalía. Por ejemplo, el rechazo de envío de un paquete de una computadora a otra se considera normal, pero si varias computadoras continúan enviando paquetes rechazados unas a otras, el conjunto se debería considerar como outlier colectivo. <span class="citation" data-cites="MineriaDatos_R">Gaona et&nbsp;al. (<a href="#ref-MineriaDatos_R" role="doc-biblioref">2021</a>)</span></p>
+</section>
+</section>
+<section id="algoritmos-de-clustering" class="level1">
+<h1>Algoritmos de Clustering</h1>
+<section id="qué-signfica-clustering" class="level2">
+<h2 class="anchored" data-anchor-id="qué-signfica-clustering">¿Qué signfica <em>clustering</em>?</h2>
+<p>El clustering es una técnica de aprendizaje automático no supervisado que busca dividir el dataset en el que se este trabajando en grupos, a los que llamaremos <em><em>clústers</em></em>, en donde los elementos que se encuentran dentro de uno son lo más similares entre si y lo más distintos posibles o los de otro clúster.</p>
+<p>Como es un método no supervizado no se necesita que los datos tengan etiquetas, clasificaciones previas o ejemplos de entrenamiento, si no que más bien lo que se busca es encontrar la distancia matemática (o similitud) entre cada dato para agruparlos lo más correctamente posible.</p>
+</section>
+<section id="de-qué-nos-sirven-los-clústers" class="level2">
+<h2 class="anchored" data-anchor-id="de-qué-nos-sirven-los-clústers">¿De qué nos sirven los clústers?</h2>
+<ul>
+<li>Descubrir patrones ocultos: Ayuda a revelar relaciones, estructuras y agrupaciones naturales dentro de los datos que no son evidentes a simple vista.</li>
+<li>Simplificar información compleja: Permite dividir y resumir grandes volúmenes de datos ruidosos en subgrupos más pequeños, homogéneos y manejables.</li>
+<li>Exploración y descubrimiento: Es sumamente útil para encontrar grupos de datos o categorías que eran previamente desconocidas por los analistas.</li>
+</ul>
+</section>
+<section id="términos-generales-de-los-algoritmos-de-clústering" class="level2">
+<h2 class="anchored" data-anchor-id="términos-generales-de-los-algoritmos-de-clústering">Términos Generales de los Algoritmos de Clústering</h2>
+<ol type="1">
+<li>El algoritmo evalúa cada registro del conjunto de datos tomando en cuenta sus características como si fueran coordenadas de un punto en el espacio.</li>
+<li>Luego, usamos métricas (como la distancia euclídea o la correlación) para medir qué tan cerca están esos puntos unos de otros</li>
+<li>Con base en esta proximidad, el algoritmo asocia los puntos de modo que se minimice la distancia entre los elementos de un mismo grupo (haciéndolos muy compactos y similares) y se maximice la separación con los demás grupos.</li>
+</ol>
+<section id="ejemplo-corto" class="level3">
+<h3 class="anchored" data-anchor-id="ejemplo-corto">Ejemplo Corto</h3>
+<p>Digamos que tenemos un dataset de compras de un supermercado. Cada entrada en el conjunto se refiere a lo que compra una persona y queremos detectar grupos basados en clustering en base a esos datos. Entonces el algoritmo puede agrupar en “compradores frecuentes”, “compradores nuevos”, “compradores de un solo artículo”, etc. Y en base a estas métricas el supermercado puede encontrar patrones de los artículos más vendidos, etc.</p>
+</section>
+</section>
+<section id="k-means" class="level2">
+<h2 class="anchored" data-anchor-id="k-means">K-Means</h2>
+</section>
+<section id="dbscan" class="level2">
+<h2 class="anchored" data-anchor-id="dbscan">DBSCAN</h2>
+<p>Sus siglas significan “Density-Based Spatial Clustering of Applications with Noise”, lo que se traduce a <em>agrupamiento espacial basado en densidad de aplicaciones con ruido</em>. Es un algoritmo creado por Martin Ester, Hans-Peter Kriegel, Jörg Sander y Xiaowei Xu en 1996.</p>
+<section id="referencias" class="level3">
+<h3 class="anchored" data-anchor-id="referencias">Referencias</h3>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-Anblicks_Outliers" class="csl-entry" role="listitem">
+Anblicks. 2020. <span>«Types of outliers: Key to accurate data analysis»</span>. En <em>Anblicks</em>. <a href="https://www.anblicks.com/blog/an-introduction-to-outliers-what-are-outliers-types-of-outliers/">https://www.anblicks.com/blog/an-introduction-to-outliers-what-are-outliers-types-of-outliers/</a>.
+</div>
+<div id="ref-Pontia_2026" class="csl-entry" role="listitem">
+<span>«Clustering: Segmentación de Datos para Descubrir Patrones Ocultos»</span>. 2026. En <em>Pontia Tech</em>. <a href="https://www.pontia.tech/clustering-que-es/">https://www.pontia.tech/clustering-que-es/</a>.
+</div>
+<div id="ref-MineriaDatos_R" class="csl-entry" role="listitem">
+Gaona, Amparo, Gerardo Áviles, y Salvador López. 2021. <span>«Detección de anomalías»</span>. En <em>Minería de datos con R</em>, 1.ª ed. Las Prensas de Ciencias.
+</div>
+<div id="ref-IBM_Clusters" class="csl-entry" role="listitem">
+IBM. 2025. <span>«¿Qué es el clustering?»</span> En <em>IBM</em>. <a href="https://www.ibm.com/es-es/think/topics/clustering">https://www.ibm.com/es-es/think/topics/clustering</a>.
+</div>
+<div id="ref-Munoz_outliers" class="csl-entry" role="listitem">
+Munoz, Harold. 2025. <span>«Datos Atípicos (outliers) en machine learning: Impacto, detección y aplicaciones en detección de fraude»</span>. En <em>Blog de Tecnología, Datos, Machine Learning y BigData</em>. <a href="https://disenet.com/datos-atipicos-outliers-en-machine-learning-impacto-deteccion-y-aplicaciones-en-deteccion-de-fraude/">https://disenet.com/datos-atipicos-outliers-en-machine-learning-impacto-deteccion-y-aplicaciones-en-deteccion-de-fraude/</a>.
+</div>
+<div id="ref-Pei_2026" class="csl-entry" role="listitem">
+Pei, Jian. 2026. <em>Data Mining - Outlier Detection</em>. <a href="https://www2.cs.sfu.ca/CourseCentral/459/jpei/21/459OutlierDetection.pdf">https://www2.cs.sfu.ca/CourseCentral/459/jpei/21/459OutlierDetection.pdf</a>.
+</div>
+</div>
+</section>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<div class="amd-footer">
+  <img src="images/logos_unam.png" alt="Facultad de Ciencias UNAM" width="360" height="40">
+  <div class="amd-footer-txt">
+    Almacenes y Minería de Datos 26-2<br>
+    Licencia Creative Commons BY-NC-SA 4.0
+  </div>
+</div>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button,
+          { trigger: "manual",
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config);
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined;
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              }
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            }
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<script src="document_files/libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
