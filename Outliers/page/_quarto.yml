@@ -1,0 +1,62 @@
+project:
+  type: book
+
+book:
+  title: "Detección de Outliers"
+  author:
+    - name: "Méndez Ávila Luis Geovanni"
+      email: "idk@ciencias.unam.mx"
+    - name: "Paredes Zamudio Luis Daniel"
+      email: "danielparedes@ciencias.unam.mx"
+    - name: "Sánchez Rosas Roberto Samuel"
+      email: "idk@ciencias.unam.mx"
+  date: "2026-05-29"
+  chapters:
+    - index.qmd
+  favicon: "images/favicon.png"
+  search: true
+  repo-url: https://github.com/wallsified/AyMdD_2026-2/tree/main/Outliers/page
+  #repo-actions: [edit]
+  downloads: [pdf, epub]
+  sharing: [twitter, facebook]
+  page-footer: 
+      left: "Facultad de Ciencias, Ciencias de la Computación, UNAM"
+      center: "© 2026 Méndez Ávila, Paredes Zamudio y Sánchez Rosas"
+      right: "Almacenes y Minería de Datos 26-2" 
+  page-navigation: true
+  
+bibliography: "references.bib"
+nocite: |
+  @*
+lang: "es"
+theme: ["styles/nord.scss"]
+
+format:
+  html:
+    citeproc: true
+    citations-hover: true
+    citation-location: document
+    # include-after-body: "styles/footer.html"
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Mostrar código"
+    code-block-border-left: true
+    code-line-numbers: true
+    code-copy: true
+    code-link: true
+    syntax-highlighting: nord
+    toc: true
+    toc-depth: 3
+    toc-title: "Contenido del Documento"
+    toc-location: left
+    fig-align: center
+    smooth-scroll: true
+    number-sections: false
+    number-depth: 3
+    code-links:
+      - text: "Repositorio del Proyecto"
+        href: "https://github.com/wallsified/AyMdD_2026-2/tree/main/Outliers/page"
+        icon: "github"
+
+execute:
+  cache: true
