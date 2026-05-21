@@ -3,53 +3,96 @@ title: "Detección de Outliers"
 subtitle: "Almacenes y Minería de Datos - 2026-2"
 author: "Méndez Ávila Luis Geovanni, Paredes Zamudio Luis Daniel, Sánchez Rosas Roberto Samuel"
 date: "2026-05-29"
-date-modified: today #cambiar o quitar el dia de la entrega
+date-modified: today # cambiar o quitar el dia de la entrega
 # se puede agregar un resumen del documento aquí con "summary"
+
 bibliography: "references.bib"
+nocite: |
+  @*
+lang: "es"
+theme: "nord.scss"
+
 format:
-    html:
-        lang: "es"
-        citeproc: true
-        citations-hover : true
-        citation-location: document
-        include-after-body: "footer.html"
-        theme: "nord.scss"
-        html-math-method: katex
-        code-fold: true
-        code-summary: "Mostrar código"
-        code-block-border-left: true
-        code-line-numbers: true
-        code-copy: true
-        code-link: true
-        syntax-highlighting: nord
-        toc: true
-        toc-depth: 3
-        toc-title: "Contenido del Documento"
-        toc-location: right
-        fig-align: center
-        smooth-scroll: true
-        number-sections: false
-        number-depth: 3
-        code-links:
-            - text: "Código en GitHub"
-              href: "https://github.com/wallsified/AyMdD_2026-2"
-              icon: "github"
+  html:
+
+    citeproc: true
+    citations-hover: true
+    citation-location: document
+    include-after-body: "footer.html"
+    html-math-method: katex
+    code-fold: true
+    code-summary: "Mostrar código"
+    code-block-border-left: true
+    code-line-numbers: true
+    code-copy: true
+    code-link: true
+    syntax-highlighting: nord
+    toc: true
+    toc-depth: 3
+    toc-title: "Contenido del Documento"
+    toc-location: right
+    fig-align: center
+    smooth-scroll: true
+    number-sections: false
+    number-depth: 3
+    code-links:
+      - text: "Código en GitHub"
+        href: "https://github.com/wallsified/AyMdD_2026-2"
+        icon: "github"
+  pdf: default
+  ipynb: default
 ---
 
-# Work in Progress
 
-aqui aun no hay nada, solo testeando configuración
+# ¿Qué es un Outlier"?
 
-```{python}
-print("Hello, World!")
-```
+Un outlier, o un _dato atípico_, es un objeto que tiene características diferentes de la mayoria de
+otros del dataset con el que estemos trabajando. También puede ser un valor inusual con respecto
+a los valores típicos de una variable. Por ejemplo, si tenemos un dataset con la información de la altura
+de un grupo de personas, y el promedio es de 1.80 metros, un outlier sería ver un valor de 2.15 metros.
 
-y segun esto, para poner en latex solo lo ponemos así
+La naturaleza de los outliers es dual, así como pueden ser el resultado de errores de medición o entrada
+de datos, también pueden representar eventos geniunos pero poco frencuentes que aún nos pueden dar
+información valiosa del conjunto de datos. @Munoz_outliers
 
-$$E = mc^2$$
+## ¿Por qué es importante detectar los outliers?
 
-y haces citas haciendo esto (@knuth84), suponiendo que la clave de la referencia
-está en `references.bib`
+Si estos valores no se identifican ni procesan de una manera adecuada perjudica considerablemente
+los análisis estadísticos que se hagan de nuestros datos, ya que puede sesgar el modelos, reducir
+su precisión y/o comprometer su interpretabilidad.
+
+Sin embargo la decisión de cómo manejar un outlier debe precederse por una investigación sobre _por
+qué existe_. Si un outlier es claramente el resultado de un error su eliminación o corrección es
+justificada. Sin embargo, si el outlier representa un evento genuino y válido, pero tal vez menos probable,
+debe ser considerado cuidadosamente o incluso aprovechado para obtener información valiosa.
+
+## Outliers y Ruido
+
+Algo que vale la pena recalcar es que un outlier *no es lo mismo que el ruido*. Mientras que el ruido
+son datos incorrectos o inconsistentes que restan la calidad del modelo que se vaya a crear, un outlier
+es más un valor que es posible pero muy poco frecuente.
+
+# Categorización de Outliers
+
+## Outliers Globales
+
+Son los outliers menos específicos. Son eventos que se desvían significativamente del resto del
+dataset. Por ejemplo, un conjunto de datos de edad de personas en una empresa y un dato anómalo de
+150 años.
+
+## Outliers Contextuales
+
+Estos eventos se consideran atípicos según el contexto específico bajo el que se vayan a tratar.
+Por ejemplo, si nuestro dataset es sobre temperaturas en un estado a lo largo del año, un valor
+de 30°C es normal en verano, pero atípico en invierno.
+
+## Outliers Colectivos
+
+Como su nombre lo dice, son eventos que aunque de manera individual no parecen ser anómalos, en conjunto
+si representan una anomalía. Por ejemplo, el rechazo de envío de un paquete de una computadora a otra se
+considera normal, pero si varias computadoras continúan enviando paquetes rechazados unas a otras, el
+conjunto se debería considerar como outlier colectivo. @MineriaDatos_R
+
 
 ### Referencias
 
