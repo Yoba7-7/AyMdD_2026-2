@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.35">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Méndez Ávila Luis Geovanni">
+<meta name="author" content="Paredes Zamudio Luis Daniel">
+<meta name="author" content="Sánchez Rosas Roberto Samuel">
+
+<title>Detección de Outliers</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./images/favicon.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-6429fa8ad5f20ae2e04e859bb353eb37.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-d414ac5897fa8962618a1b44e2b4c940.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html"><span class="chapter-title">¿Qué es un Outlier?</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Detección de Outliers</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/wallsified/AyMdD_2026-2/tree/main/Outliers/page" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="./Detección-de-Outliers.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">¿Qué es un Outlier?</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contenido del Documento</h2>
+   
+  <ul>
+  <li><a href="#qué-es-un-outlier" id="toc-qué-es-un-outlier" class="nav-link active" data-scroll-target="#qué-es-un-outlier">¿Qué es un Outlier?</a>
+  <ul class="collapse">
+  <li><a href="#por-qué-es-importante-detectar-los-outliers" id="toc-por-qué-es-importante-detectar-los-outliers" class="nav-link" data-scroll-target="#por-qué-es-importante-detectar-los-outliers">¿Por qué es importante detectar los outliers?</a></li>
+  <li><a href="#outliers-y-ruido" id="toc-outliers-y-ruido" class="nav-link" data-scroll-target="#outliers-y-ruido">Outliers y Ruido</a></li>
+  </ul></li>
+  <li><a href="#categorización-de-outliers" id="toc-categorización-de-outliers" class="nav-link" data-scroll-target="#categorización-de-outliers">Categorización de Outliers</a>
+  <ul class="collapse">
+  <li><a href="#outliers-globales" id="toc-outliers-globales" class="nav-link" data-scroll-target="#outliers-globales">Outliers Globales</a></li>
+  <li><a href="#outliers-contextuales" id="toc-outliers-contextuales" class="nav-link" data-scroll-target="#outliers-contextuales">Outliers Contextuales</a></li>
+  <li><a href="#outliers-colectivos" id="toc-outliers-colectivos" class="nav-link" data-scroll-target="#outliers-colectivos">Outliers Colectivos</a></li>
+  </ul></li>
+  <li><a href="#qué-signfica-clustering" id="toc-qué-signfica-clustering" class="nav-link" data-scroll-target="#qué-signfica-clustering">¿Qué signfica <em>clustering</em>?</a>
+  <ul class="collapse">
+  <li><a href="#de-qué-nos-sirven-los-clústers" id="toc-de-qué-nos-sirven-los-clústers" class="nav-link" data-scroll-target="#de-qué-nos-sirven-los-clústers">¿De qué nos sirven los clústers?</a></li>
+  </ul></li>
+  <li><a href="#algoritmos-de-clustering" id="toc-algoritmos-de-clustering" class="nav-link" data-scroll-target="#algoritmos-de-clustering">Algoritmos de Clustering</a>
+  <ul class="collapse">
+  <li><a href="#términos-generales-de-los-algoritmos-de-clústering" id="toc-términos-generales-de-los-algoritmos-de-clústering" class="nav-link" data-scroll-target="#términos-generales-de-los-algoritmos-de-clústering">Términos Generales de los Algoritmos de Clústering</a>
+  <ul class="collapse">
+  <li><a href="#ejemplo-corto" id="toc-ejemplo-corto" class="nav-link" data-scroll-target="#ejemplo-corto">Ejemplo Corto</a></li>
+  </ul></li>
+  <li><a href="#k-means" id="toc-k-means" class="nav-link" data-scroll-target="#k-means">K-Means</a>
+  <ul class="collapse">
+  <li><a href="#visualizando-k-means" id="toc-visualizando-k-means" class="nav-link" data-scroll-target="#visualizando-k-means">Visualizando K-Means</a></li>
+  <li><a href="#la-regla-del-codo" id="toc-la-regla-del-codo" class="nav-link" data-scroll-target="#la-regla-del-codo">La Regla del Codo</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#referencias" id="toc-referencias" class="nav-link" data-scroll-target="#referencias">Referencias</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/wallsified/AyMdD_2026-2/tree/main/Outliers/page/edit/main/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li></ul></div><div class="quarto-code-links"><h2>Enlaces de código</h2><ul><li><a href="https://marimo.dev/"><i class="bi bi-book-fill"></i>Cuaderno de Marimo</a></li><li><a href="https://github.com/wallsified/AyMdD_2026-2/tree/main/Outliers/page"><i class="bi bi-github"></i>Repositorio del Proyecto</a></li><li><a href="example.com"><i class="bi bi-easel-fill"></i>Presentación</a></li><li><a href="Detección-de-Outliers.pdf"><i class="bi bi-file-earmark-pdf-fill"></i>Descargar PDF</a></li></ul></div></nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Detección de Outliers</h1>
+<p class="subtitle lead">Clasificación y Métodos de Clustering</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Autores/as</div>
+    <div class="quarto-title-meta-contents">
+             <p>Méndez Ávila Luis Geovanni <a href="mailto:lgma77@ciencias.unam.mx" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
+             <p>Paredes Zamudio Luis Daniel <a href="mailto:danielparedes@ciencias.unam.mx" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
+             <p>Sánchez Rosas Roberto Samuel <a href="mailto:samuel03srciencias.unam.mx" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Fecha de publicación</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">29 de mayo de 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="qué-es-un-outlier" class="level1">
+<h1>¿Qué es un Outlier?</h1>
+<blockquote class="blockquote">
+<p>Es un objeto que tiene características diferentes de la mayoria de otros del dataset con el que estemos trabajando. También puede ser un valor inusual con respecto a los valores típicos de una variable.</p>
+</blockquote>
+<p>Por ejemplo, si tenemos un dataset con la información de la altura de un grupo de personas, y el promedio es de 1.80 metros, un outlier sería ver un valor de 2.15 metros.</p>
+<p>La naturaleza de los outliers es dual, así como pueden ser el resultado de errores de medición o entrada de datos, también pueden representar eventos geniunos pero poco frencuentes que aún nos pueden dar información valiosa del conjunto de datos. <span class="citation" data-cites="Munoz_outliers">Munoz (<a href="index.html#ref-Munoz_outliers" role="doc-biblioref">2025</a>)</span></p>
+<section id="por-qué-es-importante-detectar-los-outliers" class="level2">
+<h2 class="anchored" data-anchor-id="por-qué-es-importante-detectar-los-outliers">¿Por qué es importante detectar los outliers?</h2>
+<p>Si estos valores no se identifican ni procesan de una manera adecuada perjudica considerablemente los análisis estadísticos que se hagan de nuestros datos, ya que puede sesgar el modelos, reducir su precisión y/o comprometer su interpretabilidad.</p>
+<p>Sin embargo la decisión de cómo manejar un outlier debe precederse por una investigación sobre <em>por qué existe</em>. Si un outlier es claramente el resultado de un error su eliminación o corrección es justificada. Sin embargo, si el outlier representa un evento genuino y válido, pero tal vez menos probable, debe ser considerado cuidadosamente o incluso aprovechado para obtener información valiosa. <span class="citation" data-cites="Pontia_2026"><span>«Clustering»</span> (<a href="index.html#ref-Pontia_2026" role="doc-biblioref">2026</a>)</span></p>
+</section>
+<section id="outliers-y-ruido" class="level2">
+<h2 class="anchored" data-anchor-id="outliers-y-ruido">Outliers y Ruido</h2>
+<p>Algo que vale la pena recalcar es que un outlier <strong>no es lo mismo</strong> que el ruido. Mientras que el ruido son datos incorrectos o inconsistentes que restan la calidad del modelo que se vaya a crear, un outlier es más un valor que es posible pero muy poco frecuente.</p>
+</section>
+</section>
+<section id="categorización-de-outliers" class="level1">
+<h1>Categorización de Outliers</h1>
+<section id="outliers-globales" class="level2">
+<h2 class="anchored" data-anchor-id="outliers-globales">Outliers Globales</h2>
+<p>Son los outliers menos específicos. Son eventos que se desvían significativamente del resto del dataset. Por ejemplo, un conjunto de datos de edad de personas en una empresa y un dato anómalo de 150 años.</p>
+</section>
+<section id="outliers-contextuales" class="level2">
+<h2 class="anchored" data-anchor-id="outliers-contextuales">Outliers Contextuales</h2>
+<p>Estos eventos se consideran atípicos según el contexto específico bajo el que se vayan a tratar. Por ejemplo, si nuestro dataset es sobre temperaturas en un estado a lo largo del año, un valor de 30°C es normal en verano, pero atípico en invierno.</p>
+</section>
+<section id="outliers-colectivos" class="level2">
+<h2 class="anchored" data-anchor-id="outliers-colectivos">Outliers Colectivos</h2>
+<p>Como su nombre lo dice, son eventos que aunque de manera individual no parecen ser anómalos, en conjunto si representan una anomalía. Por ejemplo, el rechazo de envío de un paquete de una computadora a otra se considera normal, pero si varias computadoras continúan enviando paquetes rechazados unas a otras, el conjunto se debería considerar como outlier colectivo. <span class="citation" data-cites="MineriaDatos_R">Gaona et&nbsp;al. (<a href="index.html#ref-MineriaDatos_R" role="doc-biblioref">2021</a>)</span></p>
+</section>
+</section>
+<section id="qué-signfica-clustering" class="level1">
+<h1>¿Qué signfica <em>clustering</em>?</h1>
+<blockquote class="blockquote">
+<p>El clustering es una técnica de aprendizaje automático no supervisado que busca dividir el dataset en el que se este trabajando en grupos, a los que llamaremos <em><em>clústers</em></em>, en donde los elementos que se encuentran dentro de uno son lo más similares entre si y lo más distintos posibles o los de otro clúster.</p>
+</blockquote>
+<p>Como es un método no supervizado no se necesita que los datos tengan etiquetas, clasificaciones previas o ejemplos de entrenamiento, si no que más bien lo que se busca es encontrar la distancia matemática (o similitud) entre cada dato para agruparlos lo más correctamente posible.</p>
+<section id="de-qué-nos-sirven-los-clústers" class="level2">
+<h2 class="anchored" data-anchor-id="de-qué-nos-sirven-los-clústers">¿De qué nos sirven los clústers?</h2>
+<ul>
+<li><strong>Descubrir patrones ocultos</strong>: Ayuda a revelar relaciones, estructuras y agrupaciones naturales dentro de los datos que no son evidentes a simple vista.</li>
+<li><strong>Simplificar información compleja</strong>: Permite dividir y resumir grandes volúmenes de datos ruidosos en subgrupos más pequeños, homogéneos y manejables.</li>
+<li><strong>Exploración y descubrimiento</strong>: Es sumamente útil para encontrar grupos de datos o categorías que eran previamente desconocidas por los analistas.</li>
+</ul>
+</section>
+</section>
+<section id="algoritmos-de-clustering" class="level1">
+<h1>Algoritmos de Clustering</h1>
+<section id="términos-generales-de-los-algoritmos-de-clústering" class="level2">
+<h2 class="anchored" data-anchor-id="términos-generales-de-los-algoritmos-de-clústering">Términos Generales de los Algoritmos de Clústering</h2>
+<ol type="1">
+<li>El algoritmo evalúa cada registro del conjunto de datos tomando en cuenta sus características como si fueran coordenadas de un punto en el espacio.</li>
+<li>Luego, usamos métricas (como la distancia euclídea o la correlación) para medir qué tan cerca están esos puntos unos de otros</li>
+<li>Con base en esta proximidad, el algoritmo asocia los puntos de modo que se minimice la distancia entre los elementos de un mismo grupo (haciéndolos muy compactos y similares) y se maximice la separación con los demás grupos.</li>
+</ol>
+<section id="ejemplo-corto" class="level3">
+<h3 class="anchored" data-anchor-id="ejemplo-corto">Ejemplo Corto</h3>
+<p>Digamos que tenemos un dataset de compras de un supermercado. Cada entrada en el conjunto se refiere a lo que compra una persona y queremos detectar grupos basados en clustering en base a esos datos. Entonces el algoritmo puede agrupar en “compradores frecuentes”, “compradores nuevos”, “compradores de un solo artículo”, etc. Y en base a estas métricas el supermercado puede encontrar patrones de los artículos más vendidos, etc.</p>
+</section>
+</section>
+<section id="k-means" class="level2">
+<h2 class="anchored" data-anchor-id="k-means">K-Means</h2>
+<p>El algoritmo de K-Means es uno de los métodos de clustering más populares y ampliamente utilizados. Su objetivo es dividir un conjunto de datos en <span class="math inline">k</span> clústers distintos, donde <span class="math inline">k</span> es un número predefinido por el usuario. Funciona de la siguiente manera:</p>
+<ul>
+<li>Tomamos <span class="math inline">k</span> datos (o puntos) aleatorios como los centros iniciales (o <em>centroides</em>) de cada clúster.</li>
+<li>Asignamos el resto de los datos a el clúster más cercano calculando su distancia a cada centro y asignandolo al de menor distancia.</li>
+<li>Una vez que todos los datos han sido asignados a un clúster, el algoritmo recalcula los centros de cada clúster tomando la media de los puntos asignados a ese clúster.</li>
+<li>Repetimos los pasos de asignación y recalculo de centros hasta que las asignaciones de los puntos no cambien significativamente o se alcance un número máximo de iteraciones.</li>
+</ul>
+<section id="visualizando-k-means" class="level3">
+<h3 class="anchored" data-anchor-id="visualizando-k-means">Visualizando K-Means</h3>
+<p>Por ejemplo, en las siguientes imágenes tenemos un dataset con una <span class="math inline">n</span> cantidad de datos. Vamos a tomar <span class="math inline">k=3</span> y seleccionamos 3 puntos aleatorios y los marcamos con azul, verde y amarillo. De esto creamos los primeros clústeres basándonos en la distancia de cada punto al centroide. Luego, recalculamos los centroides tomando la media de los puntos asignados a cada clúster y repetimos el proceso hasta que los clústeres no cambien significativamente. <span class="citation" data-cites="Google_kMeans"><span>«¿Qué es el agrupamiento en clústeres k-means?»</span> (<a href="index.html#ref-Google_kMeans" role="doc-biblioref">2025</a>)</span></p>
+<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig:paso1_kmeans" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/paso1_kmeans.svg" class="img-fluid figure-img"></p>
+<figcaption>Inicialización de K-Means con <span class="math inline">k=3</span></figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig:paso2_kmeans" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/paso2_kmeans.svg" class="img-fluid figure-img"></p>
+<figcaption>Clústeres Iniciales</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig:paso3_kmeans" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/paso3_kmeans.svg" class="img-fluid figure-img"></p>
+<figcaption>Centroides recalculados</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig:paso4_kmeans" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/paso4_kmeans.svg" class="img-fluid figure-img"></p>
+<figcaption>Clústeres Finales</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="la-regla-del-codo" class="level3">
+<h3 class="anchored" data-anchor-id="la-regla-del-codo">La Regla del Codo</h3>
+<p>¿Y cómo sabemos cual es el valor correcto de <span class="math inline">k</span> a considerar? El método del codo sirve justo para esto. Funciona de la siguiente manera:</p>
+<ul>
+<li>Ejecutamos <span class="math inline">k</span>-Means para diferentes valores de <span class="math inline">k</span> (por ejemplo, desde 1 hasta 10).</li>
+<li>Para cada valor de <span class="math inline">k</span>, calculamos la <em>inercia</em>, que es la suma de las distancias al cuadrado entre cada punto y su centroide asignado. Esta inercia representa qué tan bien se ajustan los datos a los clústers formados.</li>
+<li>Luego, graficamos la inercia en función de <span class="math inline">k</span> y buscamos el punto donde la disminución de la inercia comienza a ser menos pronunciada, formando una especie de codo (de ahi el nombre).</li>
+<li>El punto resultante suele ser la mejor elección para el número óptimo de clústers, ya que representa un buen equilibrio entre la complejidad del modelo (número de clústers) y la calidad del ajuste (inercia).</li>
+</ul>
+<section id="ejemplo-usando-el-método-del-codo" class="level4">
+<h4 class="anchored" data-anchor-id="ejemplo-usando-el-método-del-codo">Ejemplo usando el método del codo</h4>
+<p>Vamos a crear un conjunto de datos aleatorios usando la función <code>make_blobs</code> de <code>sklearn.datasets</code>, que genera datos agrupados en clústers. Luego, aplicaremos el método del codo para determinar el número óptimo de clústers. Consideraremos que el número máximo de clústers a evaluar es 10, pero esto puede ajustarse según las necesidades del análisis.</p>
+<div id="6f36d144" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_blobs</span>
+<span id="cb1-4"><a href="#cb1-4"></a></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="kw">def</span> elbow_method(data, max_clusters<span class="op">=</span><span class="dv">10</span>):</span>
+<span id="cb1-6"><a href="#cb1-6"></a>    <span class="co">"""</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co">    Aplica el método del codo para seleccionar el número óptimo de clusters en k-means.</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="co">    Parámetros:</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="co">    ----------</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="co">    data : matriz o matriz dispersa, forma (n_samples, n_features)</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="co">        Los datos de entrada.</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="co">    max_clusters : int, opcional (por defecto=10)</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="co">        El número máximo de clusters a considerar.</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="co">    """</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a></span>
+<span id="cb1-18"><a href="#cb1-18"></a>    sum_of_squared_distances <span class="op">=</span> []</span>
+<span id="cb1-19"><a href="#cb1-19"></a></span>
+<span id="cb1-20"><a href="#cb1-20"></a>    <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, max_clusters<span class="op">+</span><span class="dv">1</span>):</span>
+<span id="cb1-21"><a href="#cb1-21"></a>        kmeans <span class="op">=</span> KMeans(n_clusters<span class="op">=</span>k)</span>
+<span id="cb1-22"><a href="#cb1-22"></a>        kmeans.fit(data)</span>
+<span id="cb1-23"><a href="#cb1-23"></a>        sum_of_squared_distances.append(kmeans.inertia_)</span>
+<span id="cb1-24"><a href="#cb1-24"></a></span>
+<span id="cb1-25"><a href="#cb1-25"></a>    <span class="co"># Graficar la curva del codo</span></span>
+<span id="cb1-26"><a href="#cb1-26"></a>    plt.plot(<span class="bu">range</span>(<span class="dv">1</span>, max_clusters<span class="op">+</span><span class="dv">1</span>), sum_of_squared_distances, <span class="st">'bx-'</span>)</span>
+<span id="cb1-27"><a href="#cb1-27"></a>    plt.xlabel(<span class="st">'Número de Clusters (k)'</span>)</span>
+<span id="cb1-28"><a href="#cb1-28"></a>    plt.ylabel(<span class="st">'Suma de las Distancias al Cuadrado'</span>)</span>
+<span id="cb1-29"><a href="#cb1-29"></a>    plt.title(<span class="st">'Curva del Codo'</span>)</span>
+<span id="cb1-30"><a href="#cb1-30"></a>    plt.show</span>
+<span id="cb1-31"><a href="#cb1-31"></a></span>
+<span id="cb1-32"><a href="#cb1-32"></a><span class="co"># Genera un conjunto de datos de ejemplo con 4 clusters</span></span>
+<span id="cb1-33"><a href="#cb1-33"></a>data, _ <span class="op">=</span> make_blobs(n_samples<span class="op">=</span><span class="dv">500</span>, centers<span class="op">=</span><span class="dv">4</span>, n_features<span class="op">=</span><span class="dv">2</span>, random_state<span class="op">=</span><span class="dv">42</span>)   </span>
+<span id="cb1-34"><a href="#cb1-34"></a><span class="co"># Aplica el método del codo</span></span>
+<span id="cb1-35"><a href="#cb1-35"></a>elbow_method(data)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-2-output-1.png" width="610" height="449" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>En este ejemplo, vemos que el valor se reduce significativamente hasta <span class="math inline">k=4</span>, lo que sugiere que 4 es el número óptimo de clústers para este conjunto de datos. <span class="citation" data-cites="Rodríguez_Codo">Rodríguez (<a href="index.html#ref-Rodríguez_Codo" role="doc-biblioref">2025</a>)</span></p>
+</section>
+</section>
+</section>
+</section>
+<section id="referencias" class="level1">
+<h1>Referencias</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-Anblicks_Outliers" class="csl-entry" role="listitem">
+Anblicks. 2020. <span>“Types of Outliers: Key to Accurate Data
+Analysis.”</span> In <em>Anblicks</em>. <a href="https://www.anblicks.com/blog/an-introduction-to-outliers-what-are-outliers-types-of-outliers/">https://www.anblicks.com/blog/an-introduction-to-outliers-what-are-outliers-types-of-outliers/</a>.
+</div>
+<div id="ref-Pontia_2026" class="csl-entry" role="listitem">
+<span>“Clustering: Segmentación de Datos Para Descubrir Patrones
+Ocultos.”</span> 2026. In <em>Pontia Tech</em>. <a href="https://www.pontia.tech/clustering-que-es/">https://www.pontia.tech/clustering-que-es/</a>.
+</div>
+<div id="ref-MineriaDatos_R" class="csl-entry" role="listitem">
+Gaona, Amparo, Gerardo Áviles, and Salvador López. 2021.
+<span>“Detección de Anomalías.”</span> In <em>Minería de Datos Con
+r</em>, 1st ed. Las Prensas de Ciencias.
+</div>
+<div id="ref-IBM_Clusters" class="csl-entry" role="listitem">
+IBM. 2025. <span>“¿Qué Es El Clustering?”</span> In <em>IBM</em>. <a href="https://www.ibm.com/es-es/think/topics/clustering">https://www.ibm.com/es-es/think/topics/clustering</a>.
+</div>
+<div id="ref-Munoz_outliers" class="csl-entry" role="listitem">
+Munoz, Harold. 2025. <span>“Datos Atípicos (Outliers) En Machine
+Learning: Impacto, Detección y Aplicaciones En Detección de
+Fraude.”</span> In <em>Blog de Tecnología, Datos, Machine Learning y
+BigData</em>. <a href="https://disenet.com/datos-atipicos-outliers-en-machine-learning-impacto-deteccion-y-aplicaciones-en-deteccion-de-fraude/">https://disenet.com/datos-atipicos-outliers-en-machine-learning-impacto-deteccion-y-aplicaciones-en-deteccion-de-fraude/</a>.
+</div>
+<div id="ref-Pei_2026" class="csl-entry" role="listitem">
+Pei, Jian. 2026. <em>Data Mining - Outlier Detection</em>. <a href="https://www2.cs.sfu.ca/CourseCentral/459/jpei/21/459OutlierDetection.pdf">https://www2.cs.sfu.ca/CourseCentral/459/jpei/21/459OutlierDetection.pdf</a>.
+</div>
+<div id="ref-Google_kMeans" class="csl-entry" role="listitem">
+<span>“¿Qué Es El Agrupamiento En Clústeres k-Means?”</span> 2025. In
+<em>Google</em>. Google. <a href="https://developers.google.com/machine-learning/clustering/kmeans/overview?hl=es-419#k-means_clustering_algorithm">https://developers.google.com/machine-learning/clustering/kmeans/overview?hl=es-419#k-means_clustering_algorithm</a>.
+</div>
+<div id="ref-Rodríguez_Codo" class="csl-entry" role="listitem">
+Rodríguez, Daniel. 2025. <span>“Método Del Codo (Elbow Method) Para
+Seleccionar El Número Óptimo de Clústeres En k-Means.”</span> In
+<em>Analytics Lane</em>. <a href="https://www.analyticslane.com/2023/06/09/metodo-del-codo-elbow-method-para-seleccionar-el-numero-optimo-de-
+clusteres-en-k-means/">https://www.analyticslane.com/2023/06/09/metodo-del-codo-elbow-method-para-seleccionar-el-numero-optimo-de-
+clusteres-en-k-means/</a>.
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Facultad de Ciencias, Ciencias de la Computación, UNAM</p>
+</div>   
+    <div class="nav-footer-center">
+<p>© 2026 Méndez Ávila, Paredes Zamudio y Sánchez Rosas</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/wallsified/AyMdD_2026-2/tree/main/Outliers/page/edit/main/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>Almacenes y Minería de Datos 26-2</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

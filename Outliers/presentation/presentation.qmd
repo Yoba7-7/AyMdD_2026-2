@@ -1,0 +1,153 @@
+# ¿Qué es un Outlier?
+
+> Objeto con características diferentes de la mayoria de otros del dataset
+> con el que estemos trabajando. También puede ser un valor inusual con respecto
+> a los valores típicos de una variable.
+
+Pueden ser el resultado de errores de medición o entrada de datos y aun así
+representar eventos geniunos pero poco frencuentes que dan información valiosa
+del dataset.
+
+# ¿Por qué es importante detectar y procesar los outliers?
+
+Entre varias razones, las 3 que más destacan son:
+
+- Perjudica los análisis estadísticos que se hagan de nuestros datos.
+- Sesga el modelo al reducir su precisión.
+- Compromete su interpretabilidad.
+
+# Outliers y Ruido
+
+Outlier ***no es lo mismo** que el ruido*.
+
+**Ruido son datos incorrectos o inconsistentes** que restan la calidad del modelo.
+
+Un **outlier** es más un **valor que es posible pero muy poco frecuente**.
+
+# Clasificación de Outliers
+
+> Globales: Son eventos que se desvían significativamente del resto del dataset.  
+*Ejemplo:* una persona de 150 años en un dataset de edades en una empresa.
+
+> Contextuales: Eventos atípicos según el contexto específico bajo el que se vayan a tratar.  
+*Ejemplo:* en un dataset de temperaturas, 30°C es normal en verano, pero atípico en invierno.
+
+> Colectivos: nEventos que individualmente no parecen anómalos, pero sí en conjunto.  
+*Ejemplo:* el rechazo de envío de paquetes entre dos computadoras es normal, pero atípico si ocurre entre varias más.
+
+# ¿Qué signfica _clustering_?
+
+> Técnica de aprendizaje automático no supervisado que busca dividir el dataset
+> en grupos llamados *_clústers_*, en donde los elementos dentro de uno son lo más
+> similares entre si y lo más distintos posibles de los de otro clúster.
+
+Como es un método no supervizado no se necesita que los datos tengan etiquetas, clasificaciones o categorías
+predefinidas para que el algoritmo pueda identificar patrones y agrupar los datos de manera efectiva.
+
+# ¿De qué nos sirven los clústers?
+
+- **Descubrir patrones ocultos**: Ayuda a revelar relaciones, estructuras y agrupaciones naturales dentro
+de los datos que no son evidentes a simple vista.
+- **Simplificar información compleja**: Permite dividir y resumir grandes volúmenes de datos ruidosos en
+subgrupos más pequeños, homogéneos y manejables.
+- **Exploración y descubrimiento**: Es sumamente útil para encontrar grupos de datos o categorías que eran
+previamente desconocidas por los analistas.
+
+
+# ¿Qué hace un algoritmo de clustering?
+
+1. Se evalúa cada registro tomando en cuenta sus características como si fueran coordenadas de un punto en el espacio.
+2. Usamos métricas (distancia euclídea, correlación, etc) para medir qué tan cerca están esos puntos unos de otros.
+3. El algoritmo asocia los puntos en base a esa métrica de modo que los elementos de un mismo grupo estén lo más cerca
+posible entre si y lo más lejos posible de los de otro clúster.
+
+
+# K-Means 
+
+- Tomamos $k$ datos (o puntos) aleatorios como los centros iniciales (_centroides_) de cada clúster.
+- Asignamos el resto de los datos a el clúster más cercano calculando su distancia a cada centro
+y asignandolo al de menor distancia.
+- Una vez que todos los datos han sido asignados a un clúster, el algoritmo recalcula los centros
+de cada clúster tomando la media de los puntos asignados a ese clúster.
+- Repetimos los pasos de asignación y recalculo de centros hasta que las asignaciones de los puntos no cambien
+significativamente o se alcance un número máximo de iteraciones.
+
+---
+
+::: {layout-ncol=2}
+![Inicialización de K-Means con $k=3$](images/paso1_kmeans.svg){width=10%, #fig:paso1_kmeans}
+
+![Clústeres Iniciales](images/paso2_kmeans.svg){width=10%, #fig:paso2_kmeans}
+:::
+
+---
+
+::: {layout-ncol=2}
+
+![Centroides recalculados](images/paso3_kmeans.svg){width=10%, #fig:paso3_kmeans}
+
+![Clústeres Finales](images/paso4_kmeans.svg){width=10%, #fig:paso4_kmeans}
+:::
+
+
+# La Regla del Codo
+
+¿Y cómo sabemos cual es el valor correcto de $k$ a considerar?
+
+- Ejecutamos $k$-Means para diferentes valores de $k$.
+- Para cada valor de $k$, calculamos la suma de las distancias al cuadrado entre cada
+punto y su centroide asignado (qué tan bien se ajustan los datos a los clústers formados). Este valor
+recibe el nombre de *inercia*.
+- Graficamos la inercia en función de $k$ y buscamos el punto donde el valor comienza a disminuir y formar un codo.
+- El punto resultante se elije como el número óptimo de clústers.
+
+---
+
+```{python}
+#| fig-width: 18
+#| fig-height: 9.5
+#| fig-dpi: 200
+#| out-width: "100%"
+#| fig-align: center
+
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.datasets import make_blobs
+
+def elbow_method(data, max_clusters=10):
+    """
+    Aplica el método del codo para seleccionar el número óptimo de clusters en k-means.
+
+    Parámetros:
+    ----------
+    data : matriz o matriz dispersa, forma (n_samples, n_features)
+        Los datos de entrada.
+
+    max_clusters : int, opcional (por defecto=10)
+        El número máximo de clusters a considerar.
+    """
+
+    sum_of_squared_distances = []
+
+    for k in range(1, max_clusters+1):
+        kmeans = KMeans(n_clusters=k)
+        kmeans.fit(data)
+        sum_of_squared_distances.append(kmeans.inertia_)
+
+    # Graficar la curva del codo
+    plt.rcParams.update({'font.size': 20})
+    plt.figure(figsize=(18, 9.5))
+    plt.plot(range(1, max_clusters + 1), sum_of_squared_distances, "bx-")
+    plt.xlabel("Número de Clusters (k)", size=24)
+    plt.ylabel("Suma de las Distancias al Cuadrado", size=24)
+    plt.title("Curva del Codo", size=26)
+    plt.tight_layout()
+    plt.show()
+
+# Genera un conjunto de datos de ejemplo con 4 clusters
+data, _ = make_blobs(n_samples=500, centers=4, n_features=2, random_state=42)
+# Aplica el método del codo
+elbow_method(data)
+```
+
+---

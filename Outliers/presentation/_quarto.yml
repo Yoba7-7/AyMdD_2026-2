@@ -1,0 +1,41 @@
+title: "Detección de Outliers"
+subtitle: "Clasificación y Métodos de Clustering"
+author:
+  - name: "Méndez Ávila Luis Geovanni"
+    email: "lgma77@ciencias.unam.mx"
+  - name: "Paredes Zamudio Luis Daniel"
+    email: "danielparedes@ciencias.unam.mx"
+  - name: "Sánchez Rosas Roberto Samuel"
+    email: "samuel03srciencias.unam.mx"
+preview:
+  port: 4200
+execute: 
+  cache: true
+jupyter: python3
+lang: "es"
+tbl-colwidths: [25, 25]
+favicon: "images/favicon.png"
+
+format:
+  revealjs:
+    theme: "styles/nord.scss"
+    slide-number: true
+    code-fold: true
+    echo: true
+    fig-align: center
+    transition: slide
+    highlight-style: nord
+    logo: "images/logos_unam.png"
+    width: 1920
+    height: 1080
+    preview-links: auto
+    embed-resources: true
+    history: false
+    multiplex: true
+    autoPlayMedia: true
+    touch: true
+    footer: "Detección de Outliers - Méndez Ávila, Paredes Zamudio, Sánchez Rosas"
+    
+bibliography: "references.bib"
+nocite: |
+  @*

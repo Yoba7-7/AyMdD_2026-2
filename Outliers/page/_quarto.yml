@@ -1,5 +1,6 @@
 project:
   type: book
+  output-dir: "docs"
   preview:
     port: 4200
 execute: 
@@ -8,6 +9,8 @@ jupyter: python3
 
 book:
   title: "Detección de Outliers"
+  output-file: "Detección-de-Outliers"
+  subtitle: "Clasificación y Métodos de Clustering"
   author:
     - name: "Méndez Ávila Luis Geovanni"
       email: "lgma77@ciencias.unam.mx"

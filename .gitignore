@@ -45,6 +45,6 @@ _book
 _extensions/
 datasets/
 **/*.quarto_ipynb
-Outliers/page/index.quarto_ipynb
-
+*index.quarto_ipynb
+output/
 /.quarto/

@@ -24,7 +24,7 @@ debe ser considerado cuidadosamente o incluso aprovechado para obtener informaci
 
 ## Outliers y Ruido
 
-Algo que vale la pena recalcar es que un outlier *no es lo mismo que el ruido*. Mientras que el ruido
+Algo que vale la pena recalcar es que un outlier **no es lo mismo** que el ruido. Mientras que el ruido
 son datos incorrectos o inconsistentes que restan la calidad del modelo que se vaya a crear, un outlier
 es más un valor que es posible pero muy poco frecuente.
 
