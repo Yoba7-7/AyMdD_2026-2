@@ -288,8 +288,14 @@ $web-font-path: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500
   font-weight: 600;
 }
 
+blockquote,
+.blockquote {
+  /* Make blockquotes more prominent (match the blue used for links/citations) */
+  color: $primary;
+}
+
 .blockquote-footer {
-  color: $nord3;
+  color: $primary;
 }
 
 .text-muted {

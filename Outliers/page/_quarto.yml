@@ -1,30 +1,34 @@
 project:
   type: book
+  preview:
+    port: 4200
+execute: 
+  cache: true
+jupyter: python3
 
 book:
   title: "Detección de Outliers"
   author:
     - name: "Méndez Ávila Luis Geovanni"
-      email: "idk@ciencias.unam.mx"
+      email: "lgma77@ciencias.unam.mx"
     - name: "Paredes Zamudio Luis Daniel"
       email: "danielparedes@ciencias.unam.mx"
     - name: "Sánchez Rosas Roberto Samuel"
-      email: "idk@ciencias.unam.mx"
+      email: "samuel03srciencias.unam.mx"
   date: "2026-05-29"
   chapters:
     - index.qmd
   favicon: "images/favicon.png"
   search: true
   repo-url: https://github.com/wallsified/AyMdD_2026-2/tree/main/Outliers/page
-  #repo-actions: [edit]
-  downloads: [pdf, epub]
-  sharing: [twitter, facebook]
-  page-footer: 
-      left: "Facultad de Ciencias, Ciencias de la Computación, UNAM"
-      center: "© 2026 Méndez Ávila, Paredes Zamudio y Sánchez Rosas"
-      right: "Almacenes y Minería de Datos 26-2" 
+  repo-actions: [edit]
+  downloads: [pdf]
+  page-footer:
+    left: "Facultad de Ciencias, Ciencias de la Computación, UNAM"
+    center: "© 2026 Méndez Ávila, Paredes Zamudio y Sánchez Rosas"
+    right: "Almacenes y Minería de Datos 26-2"
   page-navigation: true
-  
+
 bibliography: "references.bib"
 nocite: |
   @*
@@ -54,9 +58,24 @@ format:
     number-sections: false
     number-depth: 3
     code-links:
+      - text: "Cuaderno de Marimo"
+        href: "https://marimo.dev/"
+        icon: "book-fill"
       - text: "Repositorio del Proyecto"
         href: "https://github.com/wallsified/AyMdD_2026-2/tree/main/Outliers/page"
         icon: "github"
+      - text: "Presentación"
+        href: "example.com"
+        icon: "easel-fill"
+      - text: "Descargar PDF"
+        href: "Detección-de-Outliers.pdf"
+        icon: "file-earmark-pdf-fill"
 
-execute:
-  cache: true
+  pdf: 
+    code-line-numbers: true
+    code-block-border-left: true
+    syntax-highlighting: nord
+    #lof: true
+    #lot: true
+    date: "2026-05-29"
+    subtitle: "Almacenes y Minería de Datos 26-2"
