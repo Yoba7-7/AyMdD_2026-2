@@ -35,8 +35,8 @@ book:
 bibliography: "references.bib"
 nocite: |
   @*
-lang: "es"
 theme: ["styles/nord.scss"]
+lang: "es"
 
 format:
   html:

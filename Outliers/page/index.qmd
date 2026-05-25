@@ -143,9 +143,13 @@ de clústers. Consideraremos que el número máximo de clústers a evaluar es 10
 las necesidades del análisis.
 
 ```{python}
+import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.datasets import make_blobs
+import plotly.express as px
+from sklearn.preprocessing import StandardScaler
 
 def elbow_method(data, max_clusters=10):
     """
@@ -182,6 +186,103 @@ elbow_method(data)
 
 En este ejemplo, vemos que el valor se reduce significativamente hasta $k=4$, lo que sugiere que 
 4 es el número óptimo de clústers para este conjunto de datos. @Rodríguez_Codo
+
+### Ejemplo de Uso: El consumo eléctico en hogares
+
+Para ilustrar el funcionamiento de k-means en la detección de datos atípicos, analizaremos un dataset
+real de consumo eléctrico doméstico, proveniente del [repositorio UCI](https://archive.ics.uci.edu/dataset/235/individual+household+electric+power+consumption). 
+Este dataset contiene mediciones minuto a minuto de la potencia activa consumida y el voltaje 
+registrado en una vivienda francesa desde Diciembre de 2006 hasta Noviembre de 2010.
+
+Al aplicar k-means a este dataset, podemos identificar patrones de consumo y detectar posibles outliers
+que podrían indicar anomalías en el consumo eléctrico, como picos inusuales o caídas repentinas.
+
+1. **Selección y limpieza de variables:**  
+   Se utilizan dos variables principales:  
+   - `Global_active_power` (potencia activa global, en kW)  
+   - `Voltage` (voltaje de la red, en V)  
+   Se eliminan valores nulos y se convierten los datos a formato numérico.
+
+2. **Escalamiento:**  
+   Dado que ambas variables tienen escalas muy distintas, se normalizan para evitar que una domine el 
+   análisis de distancias. Usaremos `StandardScaler` de `sklearn.preprocessing` para centrar los datos 
+   en torno a la media y escalar a la unidad de varianza.
+
+3. **Aplicación de k-means:**  
+   Se agrupan los datos en *k* clústeres (el número de clústeres es ajustable). Para cada registro, se 
+   calcula la distancia al centroide de su grupo. Usaremos el algoritmo de k-means de `sklearn.cluster` 
+   para realizar esta tarea.
+
+4. **Identificación de atípicos:**  
+   Los registros cuya distancia al centroide supera un percentil alto (por ejemplo, el 99%) se marcan como atípicos.  
+   - **Atípicos globales:** Potencias inusualmente altas, sin importar el voltaje.
+   - **Atípicos contextuales:** Consumos normales pero asociados a voltajes anómalos.
+
+5. **Visualización:**  
+   Se genera un gráfico interactivo donde los puntos atípicos se resaltan en rojo, permitiendo explorar 
+   visualmente la estructura y los extremos del dataset.
+
+> Los resultados mostrados a continuación son fijos debido a la naturaleza de Quarto y Jupyter, pero se puede consultar
+> [este cuaderno de Marimo](https://molab.marimo.io/notebooks/nb_SjX8JxW8MgH6GjkQaARuKq) para ver un análisis interactivo
+> al modificar la cantidad de clústers y el umbral de detección de atípicos. 
+
+```{python}
+df = pd.read_csv('datasets/household_power_consumption.txt', sep=';', nrows= 10000, low_memory=False)
+df_limpio = df[['Global_active_power', 'Voltage']].replace('?', np.nan).dropna().astype(float)
+scaler = StandardScaler()
+df_scaled = scaler.fit_transform(df_limpio)
+kmeans = KMeans(n_clusters=4, random_state=42)
+df_limpio['Cluster'] = kmeans.fit_predict(df_scaled)
+# Obtenemos las coordenadas de los centroides y calculamos la distancia de cada punto a su centroide correspondiente
+centroides = kmeans.cluster_centers_
+distancias = np.sqrt(np.sum((df_scaled - centroides[df_limpio['Cluster']]) ** 2, axis=1))
+# El porcentaje de los datos más lejanos a cualquier clúster se consideran atípicos
+umbral = np.percentile(distancias, 99)  # Ajustable según el nivel de sensibilidad deseado
+df_limpio['Es_Atipico'] = distancias > umbral
+
+# Creamos una columna de texto para formatear las leyendas de forma clara
+df_grafico = df_limpio.copy()
+df_grafico['Clasificación'] = df_grafico['Cluster'].astype(str)
+df_grafico.loc[df_grafico['Es_Atipico'], 'Clasificación'] = 'Atípico'
+
+# Mapa de colores: clústeres comunes y rojo para anomalías
+mapa_colores = {
+    '0': '#1f77b4',      # Azul
+    '1': '#2ca02c',      # Verde
+    '2': '#9467bd',      # Morado
+    '3': '#bcbd22',      # Amarillo
+    '4': '#17becf',      # Cian
+    '5': '#e377c2',      # Rosa
+    '6': '#ff7f0e',      # Naranja
+    '7': '#8c564b',      # Café
+    '8': '#7f7f7f',      # Gris
+    '9': '#ffbb78',      # Naranja claro
+    'Atípico': '#d62728' # Rojo para Outliers
+}
+
+# Construcción del scatter plot interactivo
+fig = px.scatter(
+    df_grafico,
+    x='Global_active_power',
+    y='Voltage',
+    color='Clasificación',
+    color_discrete_map=mapa_colores,
+    symbol='Clasificación',
+    symbol_sequence=['circle', 'x'], # Los normales serán círculos y los atípicos serán 'X'
+    opacity=0.6,
+    title='Detección de Atípicos (K-Medias)',
+    labels={
+        'Global_active_power': 'Potencia Activa Global (kW)',
+        'Voltage': 'Voltaje (V)'
+    },
+    hover_data={'Cluster': True, 'Es_Atipico': False} # Muestra datos limpios al pasar el cursor
+)
+
+fig.update_layout(
+    legend_title_text='Estructura del Dataset',
+    margin=dict(l=40, r=40, t=60, b=40)
+)
+```
 
 # Referencias
 
