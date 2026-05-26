@@ -11,6 +11,37 @@ La naturaleza de los outliers es dual, así como pueden ser el resultado de erro
 de datos, también pueden representar eventos geniunos pero poco frencuentes que aún nos pueden dar
 información valiosa del conjunto de datos. @Munoz_outliers
 
+![Visualización de outliers](images/outliers.png){width=70%, #fig:outliers}
+
+## La Z-score y el IQR para detectar outliers
+
+Los outliers se detectan mediante su 'Z-score', que es una medida de cuántas desviaciones estándar
+un dato se encuentra por encima o por debajo de la media del conjunto de datos. Un valor de Z-score
+mayor a 3 o menor a -3 generalmente se considera un outlier, aunque este umbral puede ajustarse según
+el contexto y la naturaleza de los datos. Esta calificación se calcula usando la fórmula:
+
+$$Z = \frac{X - \mu}{\sigma}$$
+
+Donde:
+
+- $X$ es el valor del dato que se está evaluando,
+- $\mu$ es la media del conjunto de datos,
+- $\sigma$ es la desviación estándar del conjunto de datos.
+
+Otra forma de describirlo es mediante el rango intercuartílico (IQR), que se calcula como la diferencia
+entre el tercer cuartil (Q3) y el primer cuartil (Q1) de los datos. Un dato se considera un outlier si
+está por debajo de $Q1 - 1.5 \times IQR$ o por encima de $Q3 + 1.5 \times IQR$.
+
+Calcularlo es más trivial que el Z-score, pero es menos preciso, ya que no toma en cuenta la distribución
+de los datos, sino solo su posición relativa a los cuartiles. Se calcula como:
+
+$$IQR = Q3 - Q1$$
+
+Donde:
+
+- $Q1$ es el primer cuartil (25% de los datos por debajo de este valor),
+- $Q3$ es el tercer cuartil (75% de los datos por debajo de este valor).
+
 ## ¿Por qué es importante detectar los outliers?
 
 Si estos valores no se identifican ni procesan de una manera adecuada perjudica considerablemente
@@ -21,6 +52,7 @@ Sin embargo la decisión de cómo manejar un outlier debe precederse por una inv
 qué existe_. Si un outlier es claramente el resultado de un error su eliminación o corrección es
 justificada. Sin embargo, si el outlier representa un evento genuino y válido, pero tal vez menos probable,
 debe ser considerado cuidadosamente o incluso aprovechado para obtener información valiosa. @Pontia_2026
+
 
 ## Outliers y Ruido
 
@@ -49,6 +81,7 @@ si representan una anomalía. Por ejemplo, el rechazo de envío de un paquete de
 considera normal, pero si varias computadoras continúan enviando paquetes rechazados unas a otras, el
 conjunto se debería considerar como outlier colectivo. @MineriaDatos_R
 
+![Visualización de tipos de Outliers](images/tipos_outliers.png){width=80%, #fig:tipos-outliers}
 
 # ¿Qué signfica _clustering_?
 
@@ -90,19 +123,64 @@ el algoritmo puede agrupar en "compradores frecuentes", "compradores nuevos", "c
 artículo", etc. Y en base a estas métricas el supermercado puede encontrar patrones de los artículos más
 vendidos, etc.
 
+### La Distancia Euclídea
+
+Como mencionabamos, una de las métricas más comunes para medir la similitud entre puntos es la distancia euclídea.
+Esta se calcula usando la fórmula:
+
+$$d(P, Q) = \sqrt{\sum_{i=1}^{n} (p_i - q_i)^2}$$
+
+Donde:
+- $P$ y $Q$ son dos puntos en un espacio n-dimensional, representados por sus coordenadas $p_i$ y $q_i$
+respectivamente.
+- $n$ es el número de dimensiones o características que describen cada punto.
+
+La distancia euclídea mide la longitud del segmento de línea recta entre los puntos $P$ y $Q$ en el
+espacio n-dimensional. Cuanto menor sea esta distancia, más similares son los puntos entre sí.
+
 ## K-Means
 
 El algoritmo de K-Means es uno de los métodos de clustering más populares y ampliamente utilizados. Su
 objetivo es dividir un conjunto de datos en $k$ clústers distintos, donde $k$ es un número
-predefinido por el usuario. Funciona de la siguiente manera:
+predefinido por el usuario, minimizando la suma euclídea de las distancias al cuadrado entre los
+puntos. Funciona de la siguiente manera:
 
 - Tomamos $k$ datos (o puntos) aleatorios como los centros iniciales (o _centroides_) de cada clúster.
-- Asignamos el resto de los datos a el clúster más cercano calculando su distancia a cada centro
+- Asignamos el resto de los datos a el clúster más cercano calculando su distancia euclídea a cada centro
 y asignandolo al de menor distancia.
 - Una vez que todos los datos han sido asignados a un clúster, el algoritmo recalcula los centros
 de cada clúster tomando la media de los puntos asignados a ese clúster.
 - Repetimos los pasos de asignación y recalculo de centros hasta que las asignaciones de los puntos no cambien
 significativamente o se alcance un número máximo de iteraciones.
+
+### Los Centroides
+
+Mencionamos antes que éstos son los puntos que representan el centro de cada clúster.  Se calculan tomando
+la media de las coordenadas de los puntos asignados a cada clúster, siendo así la "coordenada promedio"
+de los puntos dentro del clúster. Matemáticamente, se ve de la siguiente manera:
+
+$$\mu_i = \frac{1}{|S_i|} \sum_{x \in S_i} x$$
+
+Donde:
+
+- $\mu_i$ es el centroide del clúster $i$,
+- $S_i$ es el conjunto de puntos asignados al clúster $i$
+- $|S_i|$ es el número de puntos en el clúster $i$,
+- $x$ representa cada punto dentro del clúster $i$.
+
+### La Inercia de K-Means
+
+Otro objetivo de K-Means es minimizar la suma de las distancias al cuadrado entre cada punto y el centroide de
+su clúster asignado, esto para saber que tan dispersos están los datos respecto a su centroide.
+Matemáticamente, esto se expresa como
+
+$$\sum_{j=1}^{k} \sum_{x \in S_j} d(x, \mu_j)^2$$
+
+Donde:
+
+- $S_j$ es el conjunto de puntos asignados al clúster $j$,
+- $\mu_j$ es el centroide del clúster $j$,
+- $d(x, \mu_j)$ es la distancia entre el punto $x$ y el centroide $\mu_j$.
 
 ### Visualizando K-Means
 
@@ -143,6 +221,11 @@ que podrían indicar anomalías en el consumo eléctrico, como picos inusuales o
    análisis de distancias. Usaremos `StandardScaler` de `sklearn.preprocessing` para centrar los datos
    en torno a la media y escalar a la unidad de varianza.
 
+> Nota: `StandardScaler` usa la fórmula $$x_{scaled} = \frac{x - \bar{x}}{s}$$ para normalizar los datos,
+> donde $\bar{x}$ es la media de la variable y $s$ es su desviación estándar. Esto asegura que cada variable
+> tenga una media de 0 y una desviación estándar de 1, lo que facilita la comparación entre ellas en el análisis
+> de clustering.
+
 3. **Aplicación de k-means:**
    Se agrupan los datos en *k* clústeres (supondremos $k=8$). Para cada registro, se
    calcula la distancia al centroide de su grupo. Usaremos el algoritmo de k-means de `sklearn.cluster`
@@ -179,7 +262,7 @@ df_scaled = scaler.fit_transform(df_limpio)
 # Aplicamos k-means para agrupar los datos en clústers y detectar atípicos
 # Como mencionabamos, vamos a suponer $k=8$. Pero como saber si este es el valor
 # correcto?
-kmeans = KMeans(n_clusters=10, random_state=42)
+kmeans = KMeans(n_clusters=8, random_state=42)
 df_limpio['Cluster'] = kmeans.fit_predict(df_scaled)
 
 # Obtenemos las coordenadas de los centroides y calculamos la distancia de cada punto a su centroide correspondiente
@@ -239,8 +322,7 @@ fig.update_layout(
 Funciona de la siguiente manera:
 
 - Ejecutamos $k$-Means para diferentes valores de $k$ (por ejemplo, desde 1 hasta 10).
-- Para cada valor de $k$, calculamos la _inercia_, que es la suma de las distancias al cuadrado entre cada
-punto y su centroide asignado. Esta inercia representa qué tan bien se ajustan los datos a los clústers formados.
+- Para cada valor de $k$, calculamos la inercia.
 - Luego, graficamos la inercia en función de $k$ y buscamos el punto donde la disminución de la inercia comienza
 a ser menos pronunciada, formando una especie de codo (de ahi el nombre).
 - El punto resultante suele ser la mejor elección para el número óptimo de clústers, ya que representa un
@@ -279,7 +361,7 @@ def elbow_method(data, max_clusters=10):
 
 # Aplicar el método del codo
 elbow_method(df_limpio, max_clusters=10)
-    
+
 ```
 
 En este ejemplo, vemos que el valor de la inercia se estabiliza hasta $k=10$, lo que sugiere que

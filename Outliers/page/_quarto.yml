@@ -18,7 +18,7 @@ book:
       email: "danielparedes@ciencias.unam.mx"
     - name: "Sánchez Rosas Roberto Samuel"
       email: "samuel03srciencias.unam.mx"
-  date: "2026-05-29"
+  date: "2026-05-26"
   chapters:
     - index.qmd
   favicon: "images/favicon.png"
@@ -55,7 +55,7 @@ format:
     toc: true
     toc-depth: 3
     toc-title: "Contenido del Documento"
-    toc-location: left
+    toc-location: right
     fig-align: center
     smooth-scroll: true
     number-sections: false
@@ -77,8 +77,20 @@ format:
   pdf: 
     code-line-numbers: true
     code-block-border-left: true
-    syntax-highlighting: nord
-    #lof: true
-    #lot: true
-    date: "2026-05-29"
+    syntax-highlighting: github
+    date: "2026-05-26"
     subtitle: "Almacenes y Minería de Datos 26-2"
+    keep-tex: true
+    fig-align: center
+    fig-cap-location: bottom
+    subject: "Detección de Outliers"
+    keywords: ["Outliers", "Análisis de Datos", "Minería de Datos", "Clustering", "Clasificación"]
+    title: "Detección de Outliers: Clasificación y Métodos de Clustering"
+    toc: true
+    toc-depth: 3
+    toc-title: "Contenido del Documento"
+    number-sections: false
+    colorlinks: true
+    
+    
+    
