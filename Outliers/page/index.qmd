@@ -330,6 +330,8 @@ buen equilibrio entre la complejidad del modelo (número de clústers) y la cali
 
 #### Ejemplo usando el método del codo
 
+Veamos como se ve esto aplicado a nuestro dataset anterior. En este caso, vamos a ejecutar k-means 
+para valores de $k$ desde 1 hasta 10 y graficar la inercia para cada uno de estos valores.
 
 ```{python}
 def elbow_method(data, max_clusters=10):
@@ -364,7 +366,7 @@ elbow_method(df_limpio, max_clusters=10)
 
 ```
 
-En este ejemplo, vemos que el valor de la inercia se estabiliza hasta $k=10$, lo que sugiere que
+Vemos que el valor de la inercia se estabiliza hasta $k=10$, lo que sugiere que
 10 es el número óptimo de clústers para este conjunto de datos y no $k=8$ como se había supuesto inicialmente.
 @Rodríguez_Codo
 

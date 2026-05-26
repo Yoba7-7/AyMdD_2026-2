@@ -73,24 +73,3 @@ format:
       - text: "Descargar PDF"
         href: "Detección-de-Outliers.pdf"
         icon: "file-earmark-pdf-fill"
-
-  pdf: 
-    code-line-numbers: true
-    code-block-border-left: true
-    syntax-highlighting: github
-    date: "2026-05-26"
-    subtitle: "Almacenes y Minería de Datos 26-2"
-    keep-tex: true
-    fig-align: center
-    fig-cap-location: bottom
-    subject: "Detección de Outliers"
-    keywords: ["Outliers", "Análisis de Datos", "Minería de Datos", "Clustering", "Clasificación"]
-    title: "Detección de Outliers: Clasificación y Métodos de Clustering"
-    toc: true
-    toc-depth: 3
-    toc-title: "Contenido del Documento"
-    number-sections: false
-    colorlinks: true
-    
-    
-    
