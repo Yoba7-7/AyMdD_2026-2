@@ -1,35 +1,42 @@
 project:
   type: book
+  output-dir: "docs"
+  preview:
+    port: 4200
+execute: 
+  cache: true
+jupyter: python3
 
 book:
   title: "Detección de Outliers"
+  output-file: "Detección-de-Outliers"
+  subtitle: "Clasificación y Métodos de Clustering"
   author:
     - name: "Méndez Ávila Luis Geovanni"
-      email: "idk@ciencias.unam.mx"
+      email: "lgma77@ciencias.unam.mx"
     - name: "Paredes Zamudio Luis Daniel"
       email: "danielparedes@ciencias.unam.mx"
     - name: "Sánchez Rosas Roberto Samuel"
-      email: "idk@ciencias.unam.mx"
-  date: "2026-05-29"
+      email: "samuel03srciencias.unam.mx"
+  date: "2026-05-26"
   chapters:
     - index.qmd
   favicon: "images/favicon.png"
   search: true
   repo-url: https://github.com/wallsified/AyMdD_2026-2/tree/main/Outliers/page
-  #repo-actions: [edit]
-  downloads: [pdf, epub]
-  sharing: [twitter, facebook]
-  page-footer: 
-      left: "Facultad de Ciencias, Ciencias de la Computación, UNAM"
-      center: "© 2026 Méndez Ávila, Paredes Zamudio y Sánchez Rosas"
-      right: "Almacenes y Minería de Datos 26-2" 
+  repo-actions: [edit]
+  downloads: [pdf]
+  page-footer:
+    left: "Facultad de Ciencias, Ciencias de la Computación, UNAM"
+    center: "© 2026 Méndez Ávila, Paredes Zamudio y Sánchez Rosas"
+    right: "Almacenes y Minería de Datos 26-2"
   page-navigation: true
-  
+
 bibliography: "references.bib"
 nocite: |
   @*
-lang: "es"
 theme: ["styles/nord.scss"]
+lang: "es"
 
 format:
   html:
@@ -48,15 +55,21 @@ format:
     toc: true
     toc-depth: 3
     toc-title: "Contenido del Documento"
-    toc-location: left
+    toc-location: right
     fig-align: center
     smooth-scroll: true
     number-sections: false
     number-depth: 3
     code-links:
+      - text: "Cuaderno de Marimo"
+        href: "https://molab.marimo.io/notebooks/nb_SjX8JxW8MgH6GjkQaARuKq"
+        icon: "book-fill"
       - text: "Repositorio del Proyecto"
         href: "https://github.com/wallsified/AyMdD_2026-2/tree/main/Outliers/page"
         icon: "github"
-
-execute:
-  cache: true
+      - text: "Presentación"
+        href: "presentation.html"
+        icon: "easel-fill"
+      - text: "Descargar PDF"
+        href: "Detección-de-Outliers.pdf"
+        icon: "file-earmark-pdf-fill"

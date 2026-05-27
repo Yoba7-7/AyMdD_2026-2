@@ -14,8 +14,9 @@ def _():
 @app.cell
 def _():
     import os
-    import pandas as pd
+
     import numpy as np
+    import pandas as pd
     import plotly.express as px
     from sklearn.cluster import KMeans
     from sklearn.preprocessing import StandardScaler
@@ -32,7 +33,7 @@ def _(os, urllib, zipfile):
     # Descarga el dataset en caso de que no se encuentre en la carpeta
     if not os.path.exists(txt_filename):
         urllib.request.urlretrieve(url, zip_path)
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        with zipfile.ZipFile(zip_path, "r") as zip_ref:
             zip_ref.extractall(".")
         os.remove(zip_path)
     return (txt_filename,)
@@ -68,7 +69,7 @@ def _(mo):
 @app.cell
 def _(pd, txt_filename):
     # Cargar el dataset, limpieza y escalamiento
-    df = pd.read_csv(txt_filename, sep=';', nrows=10000, low_memory=False)
+    df = pd.read_csv(txt_filename, sep=";", nrows=10000, low_memory=False)
     df
     return (df,)
 
@@ -86,7 +87,12 @@ def _(mo):
 @app.cell
 def _(StandardScaler, df, np):
     # Limpieza y escalamiento
-    df_limpio = df[['Global_active_power', 'Voltage']].replace('?', np.nan).dropna().astype(float)
+    df_limpio = (
+        df[["Global_active_power", "Voltage"]]
+        .replace("?", np.nan)
+        .dropna()
+        .astype(float)
+    )
     scaler = StandardScaler()
 
     df_scaled = scaler.fit_transform(df_limpio)
@@ -125,7 +131,7 @@ def _(mo):
 
 @app.cell
 def _(mo):
-    k = mo.ui.slider(start=2, stop=8, label='Número de Clusters (K)')
+    k = mo.ui.slider(start=2, stop=8, label="Número de Clusters (K)")
     return (k,)
 
 
@@ -137,7 +143,9 @@ def _(k, mo):
 
 @app.cell
 def _(mo):
-    percentil_corte = mo.ui.slider(start=95.0, stop=99.9, step=0.1, value=99.0, label="Percentil de Corte (%)")
+    percentil_corte = mo.ui.slider(
+        start=95.0, stop=99.9, step=0.1, value=99.0, label="Percentil de Corte (%)"
+    )
     return (percentil_corte,)
 
 
@@ -150,15 +158,17 @@ def _(mo, percentil_corte):
 @app.cell
 def _(KMeans, df_limpio, df_scaled, k, np, percentil_corte):
     kmeans = KMeans(n_clusters=k.value, random_state=42)
-    df_limpio['Cluster'] = kmeans.fit_predict(df_scaled)
+    df_limpio["Cluster"] = kmeans.fit_predict(df_scaled)
 
     # Obtenemos las coordenadas de los centroides y calculamos la distancia de cada punto a su centroide correspondiente
     centroides = kmeans.cluster_centers_
-    distancias = np.sqrt(np.sum((df_scaled - centroides[df_limpio['Cluster']]) ** 2, axis=1))
+    distancias = np.sqrt(
+        np.sum((df_scaled - centroides[df_limpio["Cluster"]]) ** 2, axis=1)
+    )
 
     # El porcentaje de los datos más lejanos a cualquier clúster se consideran atípicos
     umbral = np.percentile(distancias, percentil_corte.value)
-    df_limpio['Es_Atipico'] = distancias > umbral
+    df_limpio["Es_Atipico"] = distancias > umbral
 
     df_nuevo = df_limpio.copy()
     return (df_nuevo,)
@@ -168,47 +178,53 @@ def _(KMeans, df_limpio, df_scaled, k, np, percentil_corte):
 def _(df_nuevo, px):
     # Creamos una columna de texto para formatear las leyendas de forma clara
     df_grafico = df_nuevo.copy()
-    df_grafico['Clasificación'] = df_grafico['Cluster'].astype(str)
-    df_grafico.loc[df_grafico['Es_Atipico'], 'Clasificación'] = 'Atípico'
+    df_grafico["Clasificación"] = df_grafico["Cluster"].astype(str)
+    df_grafico.loc[df_grafico["Es_Atipico"], "Clasificación"] = "Atípico"
 
     # Mapa de colores: clústeres comunes y rojo para anomalías
     mapa_colores = {
-        '0': '#1f77b4',      # Azul
-        '1': '#2ca02c',      # Verde
-        '2': '#9467bd',      # Morado
-        '3': '#bcbd22',      # Amarillo
-        '4': '#17becf',      # Cian
-        '5': '#e377c2',      # Rosa
-        '6': '#ff7f0e',      # Naranja
-        '7': '#8c564b',      # Café
-        '8': '#7f7f7f',      # Gris
-        '9': '#ffbb78',      # Naranja claro
-        'Atípico': '#d62728' # Rojo para Outliers
+        "0": "#1f77b4",  # Azul
+        "1": "#2ca02c",  # Verde
+        "2": "#9467bd",  # Morado
+        "3": "#bcbd22",  # Amarillo
+        "4": "#17becf",  # Cian
+        "5": "#e377c2",  # Rosa
+        "6": "#ff7f0e",  # Naranja
+        "7": "#8c564b",  # Café
+        "8": "#7f7f7f",  # Gris
+        "9": "#ffbb78",  # Naranja claro
+        "Atípico": "#d62728",  # Rojo para Outliers
     }
 
     # Construcción del scatter plot interactivo
     fig = px.scatter(
         df_grafico,
-        x='Global_active_power',
-        y='Voltage',
-        color='Clasificación',
+        x="Global_active_power",
+        y="Voltage",
+        color="Clasificación",
         color_discrete_map=mapa_colores,
-        symbol='Clasificación',
-        symbol_sequence=['circle', 'x'], # Los normales serán círculos y los atípicos serán 'X'
+        symbol="Clasificación",
+        symbol_sequence=[
+            "circle",
+            "x",
+        ],  # Los normales serán círculos y los atípicos serán 'X'
         opacity=0.6,
-        title='Detección de Atípicos (K-Medias)',
+        title="Detección de Atípicos (K-Medias)",
         labels={
-            'Global_active_power': 'Potencia Activa Global (kW)',
-            'Voltage': 'Voltaje (V)'
+            "Global_active_power": "Potencia Activa Global (kW)",
+            "Voltage": "Voltaje (V)",
         },
-        hover_data={'Cluster': True, 'Es_Atipico': False} # Muestra datos limpios al pasar el cursor
+        hover_data={
+            "Cluster": True,
+            "Es_Atipico": False,
+        },  # Muestra datos limpios al pasar el cursor
     )
 
     # Estilizado del lienzo
     fig.update_layout(
-        template='plotly_dark',
-        legend_title_text='Estructura del Dataset',
-        margin=dict(l=40, r=40, t=60, b=40)
+        template="plotly_dark",
+        legend_title_text="Estructura del Dataset",
+        margin=dict(l=40, r=40, t=60, b=40),
     )
     return
 

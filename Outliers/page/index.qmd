@@ -1,13 +1,46 @@
 # ¿Qué es un Outlier?
 
-Un outlier, o un _dato atípico_, es un objeto que tiene características diferentes de la mayoria de
-otros del dataset con el que estemos trabajando. También puede ser un valor inusual con respecto
-a los valores típicos de una variable. Por ejemplo, si tenemos un dataset con la información de la altura
+> Es un objeto que tiene características diferentes de la mayoria de otros del dataset
+> con el que estemos trabajando. También puede ser un valor inusual con respecto
+> a los valores típicos de una variable.
+
+Por ejemplo, si tenemos un dataset con la información de la altura
 de un grupo de personas, y el promedio es de 1.80 metros, un outlier sería ver un valor de 2.15 metros.
 
 La naturaleza de los outliers es dual, así como pueden ser el resultado de errores de medición o entrada
 de datos, también pueden representar eventos geniunos pero poco frencuentes que aún nos pueden dar
 información valiosa del conjunto de datos. @Munoz_outliers
+
+![Visualización de outliers](images/outliers.png){width=70%, #fig:outliers}
+
+## La Z-score y el IQR para detectar outliers
+
+Los outliers se detectan mediante su 'Z-score', que es una medida de cuántas desviaciones estándar
+un dato se encuentra por encima o por debajo de la media del conjunto de datos. Un valor de Z-score
+mayor a 3 o menor a -3 generalmente se considera un outlier, aunque este umbral puede ajustarse según
+el contexto y la naturaleza de los datos. Esta calificación se calcula usando la fórmula:
+
+$$Z = \frac{X - \mu}{\sigma}$$
+
+Donde:
+
+- $X$ es el valor del dato que se está evaluando,
+- $\mu$ es la media del conjunto de datos,
+- $\sigma$ es la desviación estándar del conjunto de datos.
+
+Otra forma de describirlo es mediante el rango intercuartílico (IQR), que se calcula como la diferencia
+entre el tercer cuartil (Q3) y el primer cuartil (Q1) de los datos. Un dato se considera un outlier si
+está por debajo de $Q1 - 1.5 \times IQR$ o por encima de $Q3 + 1.5 \times IQR$.
+
+Calcularlo es más trivial que el Z-score, pero es menos preciso, ya que no toma en cuenta la distribución
+de los datos, sino solo su posición relativa a los cuartiles. Se calcula como:
+
+$$IQR = Q3 - Q1$$
+
+Donde:
+
+- $Q1$ es el primer cuartil (25% de los datos por debajo de este valor),
+- $Q3$ es el tercer cuartil (75% de los datos por debajo de este valor).
 
 ## ¿Por qué es importante detectar los outliers?
 
@@ -22,7 +55,7 @@ debe ser considerado cuidadosamente o incluso aprovechado para obtener informaci
 
 ## Outliers y Ruido
 
-Algo que vale la pena recalcar es que un outlier *no es lo mismo que el ruido*. Mientras que el ruido
+Algo que vale la pena recalcar es que un outlier **no es lo mismo** que el ruido. Mientras que el ruido
 son datos incorrectos o inconsistentes que restan la calidad del modelo que se vaya a crear, un outlier
 es más un valor que es posible pero muy poco frecuente.
 
@@ -47,15 +80,14 @@ si representan una anomalía. Por ejemplo, el rechazo de envío de un paquete de
 considera normal, pero si varias computadoras continúan enviando paquetes rechazados unas a otras, el
 conjunto se debería considerar como outlier colectivo. @MineriaDatos_R
 
+![Visualización de tipos de Outliers](images/tipos_outliers.png){width=80%, #fig:tipos-outliers}
 
-# Algoritmos de Clustering
+# ¿Qué signfica _clustering_?
 
-## ¿Qué signfica _clustering_?
-
-El clustering es una técnica de aprendizaje automático no supervisado que busca dividir el dataset
-en el que se este trabajando en grupos, a los que llamaremos *_clústers_*, en donde los elementos
-que se encuentran dentro de uno son lo más similares entre si y lo más distintos posibles o los de
-otro clúster.
+> El clustering es una técnica de aprendizaje automático no supervisado que busca dividir el dataset
+> en el que se este trabajando en grupos, a los que llamaremos *_clústers_*, en donde los elementos
+> que se encuentran dentro de uno son lo más similares entre si y lo más distintos posibles o los de
+> otro clúster.
 
 Como es un método no supervizado no se necesita que los datos tengan etiquetas, clasificaciones
 previas o ejemplos de entrenamiento, si no que más bien lo que se busca es encontrar la distancia
@@ -63,12 +95,14 @@ matemática (o similitud) entre cada dato para agruparlos lo más correctamente 
 
 ## ¿De qué nos sirven los clústers?
 
-- Descubrir patrones ocultos: Ayuda a revelar relaciones, estructuras y agrupaciones naturales dentro
+- **Descubrir patrones ocultos**: Ayuda a revelar relaciones, estructuras y agrupaciones naturales dentro
 de los datos que no son evidentes a simple vista.
-- Simplificar información compleja: Permite dividir y resumir grandes volúmenes de datos ruidosos en
+- **Simplificar información compleja**: Permite dividir y resumir grandes volúmenes de datos ruidosos en
 subgrupos más pequeños, homogéneos y manejables.
-- Exploración y descubrimiento: Es sumamente útil para encontrar grupos de datos o categorías que eran
+- **Exploración y descubrimiento**: Es sumamente útil para encontrar grupos de datos o categorías que eran
 previamente desconocidas por los analistas.
+
+# Algoritmos de Clustering
 
 ## Términos Generales de los Algoritmos de Clústering
 
@@ -88,24 +122,279 @@ el algoritmo puede agrupar en "compradores frecuentes", "compradores nuevos", "c
 artículo", etc. Y en base a estas métricas el supermercado puede encontrar patrones de los artículos más
 vendidos, etc.
 
+### La Distancia Euclídea
+
+Como mencionabamos, una de las métricas más comunes para medir la similitud entre puntos es la distancia euclídea.
+Esta se calcula usando la fórmula:
+
+$$d(P, Q) = \sqrt{\sum_{i=1}^{n} (p_i - q_i)^2}$$
+
+Donde:
+- $P$ y $Q$ son dos puntos en un espacio n-dimensional, representados por sus coordenadas $p_i$ y $q_i$
+respectivamente.
+- $n$ es el número de dimensiones o características que describen cada punto.
+
+La distancia euclídea mide la longitud del segmento de línea recta entre los puntos $P$ y $Q$ en el
+espacio n-dimensional. Cuanto menor sea esta distancia, más similares son los puntos entre sí.
+
 ## K-Means
 
-### Caso de Uso
+El algoritmo de K-Means es uno de los métodos de clustering más populares y ampliamente utilizados. Su
+objetivo es dividir un conjunto de datos en $k$ clústers distintos, donde $k$ es un número
+predefinido por el usuario, minimizando la suma euclídea de las distancias al cuadrado entre los
+puntos. Funciona de la siguiente manera:
 
-```python {.marimo}
-import marimo as mo
-slider = mo.ui.slider(1, 10, 1, label="Look, a slider!")
-slider
+- Tomamos $k$ datos (o puntos) aleatorios como los centros iniciales (o _centroides_) de cada clúster.
+- Asignamos el resto de los datos a el clúster más cercano calculando su distancia euclídea a cada centro
+y asignandolo al de menor distancia.
+- Una vez que todos los datos han sido asignados a un clúster, el algoritmo recalcula los centros
+de cada clúster tomando la media de los puntos asignados a ese clúster.
+- Repetimos los pasos de asignación y recalculo de centros hasta que las asignaciones de los puntos no cambien
+significativamente o se alcance un número máximo de iteraciones.
+
+### Los Centroides
+
+Mencionamos antes que éstos son los puntos que representan el centro de cada clúster. Se calculan tomando
+la media de las coordenadas de los puntos asignados a cada clúster, siendo así la "coordenada promedio"
+de los puntos dentro del clúster. Matemáticamente, se ve de la siguiente manera:
+
+$$\mu_i = \frac{1}{|S_i|} \sum_{x \in S_i} x$$
+
+Donde:
+
+- $\mu_i$ es el centroide del clúster $i$,
+- $S_i$ es el conjunto de puntos asignados al clúster $i$
+- $|S_i|$ es el número de puntos en el clúster $i$,
+- $x$ representa cada punto dentro del clúster $i$.
+
+### La Inercia de K-Means
+
+Otro objetivo de K-Means es minimizar la suma de las distancias al cuadrado entre cada punto y el centroide de
+su clúster asignado, esto para saber que tan dispersos están los datos respecto a su centroide.
+Matemáticamente, esto se expresa como
+
+$$\sum_{j=1}^{k} \sum_{x \in S_j} d(x, \mu_j)^2$$
+
+Donde:
+
+- $S_j$ es el conjunto de puntos asignados al clúster $j$,
+- $\mu_j$ es el centroide del clúster $j$,
+- $d(x, \mu_j)$ es la distancia entre el punto $x$ y el centroide $\mu_j$.
+
+### Visualizando K-Means
+
+Por ejemplo, en las siguientes imágenes tenemos un dataset con una $n$ cantidad de datos. Vamos a tomar
+$k=3$ y seleccionamos 3 puntos aleatorios y los marcamos con azul, verde y amarillo. De esto creamos
+los primeros clústeres basándonos en la distancia de cada punto al centroide. Luego, recalculamos los
+centroides tomando la media de los puntos asignados a cada clúster y repetimos el proceso hasta que los
+clústeres no cambien significativamente. @Google_kMeans
+
+::: {layout-ncol=2}
+![Inicialización de K-Means con $k=3$](images/paso1_kmeans.svg){width=80%, #fig:paso1_kmeans}
+
+![Clústeres Iniciales](images/paso2_kmeans.svg){width=80%, #fig:paso2_kmeans}
+
+![Centroides recalculados](images/paso3_kmeans.svg){width=80%, #fig:paso3_kmeans}
+
+![Clústeres Finales](images/paso4_kmeans.svg){width=80%, #fig:paso4_kmeans}
+:::
+
+### Ejemplo de Uso: El consumo eléctico en hogares
+
+Para ilustrar el funcionamiento de k-means en la detección de datos atípicos, analizaremos un dataset
+real de consumo eléctrico doméstico, proveniente del [repositorio UCI](https://archive.ics.uci.edu/dataset/235/individual+household+electric+power+consumption).
+Este dataset contiene mediciones minuto a minuto de la potencia activa consumida y el voltaje
+registrado en una vivienda francesa desde Diciembre de 2006 hasta Noviembre de 2010.
+
+Al aplicar k-means a este dataset, podemos identificar patrones de consumo y detectar posibles outliers
+que podrían indicar anomalías en el consumo eléctrico, como picos inusuales o caídas repentinas.
+
+1. **Selección y limpieza de variables:**
+   Se utilizan dos variables principales:
+   - `Global_active_power` (potencia activa global, en kW)
+   - `Voltage` (voltaje de la red, en V)
+   Se eliminan valores nulos y se convierten los datos a formato numérico.
+
+2. **Escalamiento:**
+   Dado que ambas variables tienen escalas muy distintas, se normalizan para evitar que una domine el
+   análisis de distancias. Usaremos `StandardScaler` de `sklearn.preprocessing` para centrar los datos
+   en torno a la media y escalar a la unidad de varianza.
+
+> Nota: `StandardScaler` usa la fórmula $$x_{scaled} = \frac{x - \bar{x}}{s}$$ para normalizar los datos,
+> donde $\bar{x}$ es la media de la variable y $s$ es su desviación estándar. Esto asegura que cada variable
+> tenga una media de 0 y una desviación estándar de 1, lo que facilita la comparación entre ellas en el análisis
+> de clustering.
+
+3. **Aplicación de k-means:**
+   Se agrupan los datos en *k* clústeres (supondremos $k=8$). Para cada registro, se
+   calcula la distancia al centroide de su grupo. Usaremos el algoritmo de k-means de `sklearn.cluster`
+   para realizar esta tarea.
+
+4. **Identificación de atípicos:**
+   Los registros cuya distancia al centroide supera un percentil alto (por ejemplo, el 99%) se marcan como atípicos.
+   - **Atípicos globales:** Potencias inusualmente altas, sin importar el voltaje.
+   - **Atípicos contextuales:** Consumos normales pero asociados a voltajes anómalos.
+
+5. **Visualización:**
+   Se genera un gráfico interactivo donde los puntos atípicos se resaltan en rojo, permitiendo explorar
+   visualmente la estructura y los extremos del dataset.
+
+::: {.callout-note}
+## Nota ssobre los resultados
+Los resultados mostrados a continuación son fijos debido a la naturaleza de Quarto y Jupyter, pero se puede consultar
+[este cuaderno de Marimo](https://molab.marimo.io/notebooks/nb_SjX8JxW8MgH6GjkQaARuKq) para ver un análisis interactivo
+al modificar la cantidad de clústers y el umbral de detección de atípicos.
+:::
+
+```{python}
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.datasets import make_blobs
+import plotly.express as px
+from sklearn.preprocessing import StandardScaler
+
+# Cargamos el dataset y seleccionamos/limpiamos las variables de interés
+df = pd.read_csv('datasets/household_power_consumption.txt', sep=';', nrows= 10000, low_memory=False)
+df_limpio = df[['Global_active_power', 'Voltage']].replace('?', np.nan).dropna().astype(float)
+scaler = StandardScaler()
+df_scaled = scaler.fit_transform(df_limpio)
+
+# Aplicamos k-means para agrupar los datos en clústers y detectar atípicos
+# Como mencionabamos, vamos a suponer $k=8$. Pero como saber si este es el valor
+# correcto?
+kmeans = KMeans(n_clusters=8, random_state=42)
+df_limpio['Cluster'] = kmeans.fit_predict(df_scaled)
+
+# Obtenemos las coordenadas de los centroides y calculamos la distancia de cada punto a su centroide correspondiente
+centroides = kmeans.cluster_centers_
+distancias = np.sqrt(np.sum((df_scaled - centroides[df_limpio['Cluster']]) ** 2, axis=1))
+
+# El porcentaje de los datos más lejanos a cualquier clúster se consideran atípicos
+umbral = np.percentile(distancias, 99)  # Ajustable según el nivel de sensibilidad deseado
+df_limpio['Es_Atipico'] = distancias > umbral
+
+# Creamos una columna de texto para formatear las leyendas de forma clara
+df_grafico = df_limpio.copy()
+df_grafico['Clasificación'] = df_grafico['Cluster'].astype(str)
+df_grafico.loc[df_grafico['Es_Atipico'], 'Clasificación'] = 'Atípico'
+
+# Mapa de colores: clústeres comunes y rojo para anomalías
+mapa_colores = {
+    '0': '#1f77b4',      # Azul
+    '1': '#2ca02c',      # Verde
+    '2': '#9467bd',      # Morado
+    '3': '#bcbd22',      # Amarillo
+    '4': '#17becf',      # Cian
+    '5': '#e377c2',      # Rosa
+    '6': '#ff7f0e',      # Naranja
+    '7': '#8c564b',      # Café
+    '8': '#7f7f7f',      # Gris
+    '9': '#ffbb78',      # Naranja claro
+    'Atípico': '#d62728' # Rojo para Outliers
+}
+
+# Construcción del scatter plot interactivo
+fig = px.scatter(
+    df_grafico,
+    x='Global_active_power',
+    y='Voltage',
+    color='Clasificación',
+    color_discrete_map=mapa_colores,
+    symbol='Clasificación',
+    opacity=0.6,
+    title='Detección de Atípicos (K-Medias)',
+    labels={
+        'Global_active_power': 'Potencia Activa Global (kW)',
+        'Voltage': 'Voltaje (V)'
+    },
+    hover_data={'Cluster': True, 'Es_Atipico': False} # Muestra datos limpios al pasar el cursor
+)
+
+fig.update_layout(
+    legend_title_text='Estructura del Dataset',
+    margin=dict(l=40, r=40, t=60, b=40)
+)
 ```
 
-## DBSCAN
+### La Regla del Codo
 
-Sus siglas significan "Density-Based Spatial Clustering of Applications with Noise", lo que se traduce
-a _agrupamiento espacial basado en densidad de aplicaciones con ruido_. Es un algoritmo creado por
-Martin Ester, Hans-Peter Kriegel, Jörg Sander y Xiaowei Xu en 1996.
+¿Y cómo sabemos cual es el valor correcto de $k$ a considerar? El método del codo sirve justo para esto.
+Funciona de la siguiente manera:
+
+- Ejecutamos $k$-Means para diferentes valores de $k$ (por ejemplo, desde 1 hasta 10).
+- Para cada valor de $k$, calculamos la inercia.
+- Luego, graficamos la inercia en función de $k$ y buscamos el punto donde la disminución de la inercia comienza
+a ser menos pronunciada, formando una especie de codo (de ahi el nombre).
+- El punto resultante suele ser la mejor elección para el número óptimo de clústers, ya que representa un
+buen equilibrio entre la complejidad del modelo (número de clústers) y la calidad del ajuste (inercia).
+
+#### Ejemplo usando el método del codo
+
+Veamos como se ve esto aplicado a nuestro dataset anterior. En este caso, vamos a ejecutar k-means 
+para valores de $k$ desde 1 hasta 10 y graficar la inercia para cada uno de estos valores.
+
+```{python}
+def elbow_method(data, max_clusters=10):
+    """
+    Aplica el método del codo para seleccionar el número óptimo de clusters en k-means.
+
+    Parámetros:
+    ----------
+    data : matriz o matriz dispersa, forma (n_samples, n_features)
+        Los datos de entrada.
+
+    max_clusters : int, opcional (por defecto=10)
+        El número máximo de clusters a considerar.
+    """
+
+    sum_of_squared_distances = []
+
+    for k in range(1, max_clusters+1):
+        kmeans = KMeans(n_clusters=k)
+        kmeans.fit(data)
+        sum_of_squared_distances.append(kmeans.inertia_)
+
+    # Graficar la curva del codo
+    plt.plot(range(1, max_clusters+1), sum_of_squared_distances, 'bx-')
+    plt.xlabel('Número de Clusters (k)')
+    plt.ylabel('Suma de las Distancias al Cuadrado')
+    plt.title('Curva del Codo')
+    plt.show
+
+# Aplicar el método del codo
+elbow_method(df_limpio, max_clusters=10)
+
+```
+
+Vemos que el valor de la inercia se estabiliza hasta $k=10$, lo que sugiere que
+10 es el número óptimo de clústers para este conjunto de datos y no $k=8$ como se había supuesto inicialmente.
+@Rodríguez_Codo
+
+# Preguntas de Reflexión
+
+::: {.callout-tip}
+## Pregunta #1
+¿Siempre conviene eliminar los outliers o en algunos casos 
+pueden aportar información valiosa al análisis? ¿Por qué?
+:::
+
+::: {.callout-tip}
+## Pregunta #2
+¿Cuando puede ser confiableescoger el número de clústers solo con una suposición inicial?
+¿Qué tan necesario es validar ese número con la regla del codo?
+:::
 
 
-### Referencias
+::: {.callout-tip}
+## Pregunta #3
+¿Cómo cambia la detección de outliers cuando el contexto de los datos sí importa? Más allá
+de los resultados, ¿qué consideraciones adicionales se deben tener en cuenta al analizar 
+outliers contextuales?
+:::
+
+# Referencias
 
 ::: {#refs}
 :::

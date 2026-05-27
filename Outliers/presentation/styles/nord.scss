@@ -80,6 +80,22 @@ $dark:          body-mix(75%) !default;
 
 $min-contrast-ratio:   1.6 !default;
 
+// Bootstrap-style helpers (RevealJS theme compilation does not always provide these)
+$enable-gradients: false !default;
+$font-size-sm: 0.875rem !default;
+
+// Used by `@each $color, $value in $theme-colors` loops below
+$theme-colors: (
+  "primary": $primary,
+  "secondary": $secondary,
+  "success": $success,
+  "info": $info,
+  "warning": $warning,
+  "danger": $danger,
+  "light": $light,
+  "dark": $dark
+) !default;
+
 // Components
 
 $border-radius:               4px !default;
@@ -524,3 +540,51 @@ pre {
 }
 
 // quarto-scss-analysis-annotation { "origin": null }
+
+/*
+   PORTADA  (#title-slide)
+   Este segmento es originalmente de @diegoviillalba, pero
+   modificado al estilo Nord,
+*/
+
+.reveal section#title-slide {
+  text-align: left;
+  /* Se cambió el 20% de la izquierda por un valor pequeño (1em) para que no toque el borde físico */
+  padding: 0 3em 0 1em;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+
+  .title {
+    font-size: 2.6em;
+    /* Use a stronger Nord blue for the title (closer to the rest of the theme accents) */
+    color: $nord8;
+    line-height: 1.2;
+    margin-bottom: 0.2em;
+    max-width: 18ch;
+    white-space: normal;
+    word-break: break-word;
+    margin-left: 0; /* Asegura que no haya margen extra */
+  }
+
+  .subtitle {
+    font-size: 0.7em;
+    color: $primary;
+    border-bottom: 2px solid $primary;
+    padding-bottom: 0.5em;
+    margin-bottom: 1em;
+    width: fit-content; /* Para que la línea del borde solo ocupe lo necesario */
+  }
+
+  .quarto-title-author-name {
+    font-size: 0.75em;
+    font-weight: 700;
+    color: $body-color;
+  }
+
+  .date, .quarto-title-affiliation {
+    font-size: 0.6em;
+    color: $text-muted;
+  }
+}
