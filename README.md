@@ -4,6 +4,7 @@
 | --------------------------- | ------------- |
 | Méndez Ávila Luis Geovanni  | 317143980     |
 | Paredes Zamudio Luis Daniel | 318159926     |
+| Sánchez Rosas Roberto Samuel | 318355159    |
 
 <br/>
 
