@@ -53,7 +53,6 @@ qué existe_. Si un outlier es claramente el resultado de un error su eliminaci�
 justificada. Sin embargo, si el outlier representa un evento genuino y válido, pero tal vez menos probable,
 debe ser considerado cuidadosamente o incluso aprovechado para obtener información valiosa. @Pontia_2026
 
-
 ## Outliers y Ruido
 
 Algo que vale la pena recalcar es que un outlier **no es lo mismo** que el ruido. Mientras que el ruido
@@ -155,7 +154,7 @@ significativamente o se alcance un número máximo de iteraciones.
 
 ### Los Centroides
 
-Mencionamos antes que éstos son los puntos que representan el centro de cada clúster.  Se calculan tomando
+Mencionamos antes que éstos son los puntos que representan el centro de cada clúster. Se calculan tomando
 la media de las coordenadas de los puntos asignados a cada clúster, siendo así la "coordenada promedio"
 de los puntos dentro del clúster. Matemáticamente, se ve de la siguiente manera:
 
@@ -240,9 +239,12 @@ que podrían indicar anomalías en el consumo eléctrico, como picos inusuales o
    Se genera un gráfico interactivo donde los puntos atípicos se resaltan en rojo, permitiendo explorar
    visualmente la estructura y los extremos del dataset.
 
-> Los resultados mostrados a continuación son fijos debido a la naturaleza de Quarto y Jupyter, pero se puede consultar
-> [este cuaderno de Marimo](https://molab.marimo.io/notebooks/nb_SjX8JxW8MgH6GjkQaARuKq) para ver un análisis interactivo
-> al modificar la cantidad de clústers y el umbral de detección de atípicos.
+::: {.callout-note}
+## Nota ssobre los resultados
+Los resultados mostrados a continuación son fijos debido a la naturaleza de Quarto y Jupyter, pero se puede consultar
+[este cuaderno de Marimo](https://molab.marimo.io/notebooks/nb_SjX8JxW8MgH6GjkQaARuKq) para ver un análisis interactivo
+al modificar la cantidad de clústers y el umbral de detección de atípicos.
+:::
 
 ```{python}
 import pandas as pd
@@ -369,6 +371,28 @@ elbow_method(df_limpio, max_clusters=10)
 Vemos que el valor de la inercia se estabiliza hasta $k=10$, lo que sugiere que
 10 es el número óptimo de clústers para este conjunto de datos y no $k=8$ como se había supuesto inicialmente.
 @Rodríguez_Codo
+
+# Preguntas de Reflexión
+
+::: {.callout-tip}
+## Pregunta #1
+¿Siempre conviene eliminar los outliers o en algunos casos 
+pueden aportar información valiosa al análisis? ¿Por qué?
+:::
+
+::: {.callout-tip}
+## Pregunta #2
+¿Cuando puede ser confiableescoger el número de clústers solo con una suposición inicial?
+¿Qué tan necesario es validar ese número con la regla del codo?
+:::
+
+
+::: {.callout-tip}
+## Pregunta #3
+¿Cómo cambia la detección de outliers cuando el contexto de los datos sí importa? Más allá
+de los resultados, ¿qué consideraciones adicionales se deben tener en cuenta al analizar 
+outliers contextuales?
+:::
 
 # Referencias
 

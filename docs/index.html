@@ -270,6 +270,7 @@ window.Quarto = {
   <li><a href="#la-regla-del-codo" id="toc-la-regla-del-codo" class="nav-link" data-scroll-target="#la-regla-del-codo">La Regla del Codo</a></li>
   </ul></li>
   </ul></li>
+  <li><a href="#preguntas-de-reflexión" id="toc-preguntas-de-reflexión" class="nav-link" data-scroll-target="#preguntas-de-reflexión">Preguntas de Reflexión</a></li>
   <li><a href="#referencias" id="toc-referencias" class="nav-link" data-scroll-target="#referencias">Referencias</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/wallsified/AyMdD_2026-2/tree/main/Outliers/page/edit/main/index.qmd" class="toc-action"><i class="bi bi-github"></i>Editar esta página</a></li></ul></div><div class="quarto-code-links"><h2>Enlaces de código</h2><ul><li><a href="https://molab.marimo.io/notebooks/nb_SjX8JxW8MgH6GjkQaARuKq"><i class="bi bi-book-fill"></i>Cuaderno de Marimo</a></li><li><a href="https://github.com/wallsified/AyMdD_2026-2/tree/main/Outliers/page"><i class="bi bi-github"></i>Repositorio del Proyecto</a></li><li><a href="presentation.html"><i class="bi bi-easel-fill"></i>Presentación</a></li><li><a href="Detección-de-Outliers.pdf"><i class="bi bi-file-earmark-pdf-fill"></i>Descargar PDF</a></li></ul></div></nav>
@@ -508,9 +509,19 @@ window.Quarto = {
 </ul></li>
 <li><p><strong>Visualización:</strong> Se genera un gráfico interactivo donde los puntos atípicos se resaltan en rojo, permitiendo explorar visualmente la estructura y los extremos del dataset.</p></li>
 </ol>
-<blockquote class="blockquote">
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Nota</span>Nota ssobre los resultados
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>Los resultados mostrados a continuación son fijos debido a la naturaleza de Quarto y Jupyter, pero se puede consultar <a href="https://molab.marimo.io/notebooks/nb_SjX8JxW8MgH6GjkQaARuKq">este cuaderno de Marimo</a> para ver un análisis interactivo al modificar la cantidad de clústers y el umbral de detección de atípicos.</p>
-</blockquote>
+</div>
+</div>
 <div id="da454176" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Mostrar código</summary>
@@ -671,6 +682,48 @@ if (outputEl) {{
 </section>
 </section>
 </section>
+</section>
+<section id="preguntas-de-reflexión" class="level1">
+<h1>Preguntas de Reflexión</h1>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Pregunta #1
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>¿Siempre conviene eliminar los outliers o en algunos casos pueden aportar información valiosa al análisis? ¿Por qué?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Pregunta #2
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>¿Cuando puede ser confiableescoger el número de clústers solo con una suposición inicial? ¿Qué tan necesario es validar ese número con la regla del codo?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Pregunta #3
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>¿Cómo cambia la detección de outliers cuando el contexto de los datos sí importa? Más allá de los resultados, ¿qué consideraciones adicionales se deben tener en cuenta al analizar outliers contextuales?</p>
+</div>
+</div>
 </section>
 <section id="referencias" class="level1">
 <h1>Referencias</h1>

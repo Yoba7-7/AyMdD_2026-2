@@ -8,6 +8,17 @@ Pueden ser el resultado de errores de medición o entrada de datos y aun así
 representar eventos geniunos pero poco frencuentes que dan información valiosa
 del dataset.
 
+---
+
+![Detección de Outliers](images/outliers.png){width=70%, #fig:visualizacion-outliers}
+
+# Z-Score y el IQR
+
+- El **Z-Score** ($Z = \frac{X - \mu}{\sigma}$) mide cuántas desviaciones estándar se encuentra un valor de la media.
+Un valor de <-3 o >3 suele considerarse un outlier.
+- El **IQR** es la diferencia entre el tercer cuartil (Q3) y el primer cuartil (Q1) de un conjunto de datos. Un dato
+se considera un outlier si es menor que $Q1 - 1.5 \times IQR$ o mayor que $Q3 + 1.5 \times IQR$.
+
 # ¿Por qué es importante detectar y procesar los outliers?
 
 Entre varias razones, las 3 que más destacan son:
@@ -35,6 +46,11 @@ Un **outlier** es más un **valor que es posible pero muy poco frecuente**.
 > Colectivos: nEventos que individualmente no parecen anómalos, pero sí en conjunto.  
 *Ejemplo:* el rechazo de envío de paquetes entre dos computadoras es normal, pero atípico si ocurre entre varias más.
 
+---
+
+![Visualizacion de tipos de outliers](images/tipos_outliers.png){width=80%}
+
+
 # ¿Qué signfica _clustering_?
 
 > Técnica de aprendizaje automático no supervisado que busca dividir el dataset
@@ -61,6 +77,19 @@ previamente desconocidas por los analistas.
 3. El algoritmo asocia los puntos en base a esa métrica de modo que los elementos de un mismo grupo estén lo más cerca
 posible entre si y lo más lejos posible de los de otro clúster.
 
+# Distancia Euclídea
+
+La distancia euclídea mide la longitud del segmento de línea recta entre los puntos $P$ y $Q$ en el
+espacio n-dimensional. Cuanto menor sea esta distancia, más similares son los puntos entre sí.
+
+$$d(P, Q) = \sqrt{\sum_{i=1}^{n} (p_i - q_i)^2}$$
+
+Donde:
+
+- $P$ y $Q$ son dos puntos en un espacio n-dimensional, representados por sus coordenadas $p_i$ y $q_i$
+respectivamente.
+- $n$ es el número de dimensiones o características que describen cada punto.
+
 
 # K-Means 
 
@@ -71,6 +100,33 @@ y asignandolo al de menor distancia.
 de cada clúster tomando la media de los puntos asignados a ese clúster.
 - Repetimos los pasos de asignación y recalculo de centros hasta que las asignaciones de los puntos no cambien
 significativamente o se alcance un número máximo de iteraciones.
+
+# Centroides
+
+Puntos que representan el centro de cada clúster. Se calculan tomando la media de las coordenadas de los puntos 
+asignados a cada clúster, siendo así la "coordenada promedio" de los puntos dentro del clúster.
+
+$$\mu_i = \frac{1}{|S_i|} \sum_{x \in S_i} x$$
+
+Donde:
+
+- $\mu_i$ es el centroide del clúster $i$,
+- $S_i$ es el conjunto de puntos asignados al clúster $i$
+- $|S_i|$ es el número de puntos en el clúster $i$,
+- $x$ representa cada punto dentro del clúster $i$.
+
+# La Inercia de K-Means
+
+Es la suma de las distancias al cuadrado entre cada punto y el centroide de su clúster asignado.
+Es una medida de qué tan bien se ajustan los datos a los clústers formados.
+
+$$\sum_{j=1}^{k} \sum_{x \in S_j} d(x, \mu_j)^2$$
+
+Donde:
+
+- $S_j$ es el conjunto de puntos asignados al clúster $j$,
+- $\mu_j$ es el centroide del clúster $j$,
+- $d(x, \mu_j)$ es la distancia entre el punto $x$ y el centroide $\mu_j$.
 
 ---
 
@@ -123,7 +179,7 @@ df_scaled = scaler.fit_transform(df_limpio)
 # Aplicamos k-means para agrupar los datos en clústers y detectar atípicos
 # Como mencionabamos, vamos a suponer $k=8$. Pero como saber si este es el valor
 # correcto?
-kmeans = KMeans(n_clusters=10, random_state=42)
+kmeans = KMeans(n_clusters=8, random_state=42)
 df_limpio['Cluster'] = kmeans.fit_predict(df_scaled)
 
 # Obtenemos las coordenadas de los centroides y calculamos la distancia de cada punto a su centroide correspondiente
@@ -185,7 +241,6 @@ fig.update_layout(
 )
 ```
 
-
 # La Regla del Codo
 
 ¿Y cómo sabemos cual es el valor correcto de $k$ a considerar?
@@ -239,5 +294,27 @@ def elbow_method(data, max_clusters=10):
 elbow_method(df_limpio, max_clusters=10)
     
 ```
+
+---
+
+::: {.callout-note}
+## Pregunta #1
+¿Siempre conviene eliminar los outliers o en algunos casos 
+pueden aportar información valiosa al análisis? ¿Por qué?
+:::
+
+::: {.callout-note}
+## Pregunta #2
+¿Cuando puede ser confiableescoger el número de clústers solo con una suposición inicial?
+¿Qué tan necesario es validar ese número con la regla del codo?
+:::
+
+
+::: {.callout-note}
+## Pregunta #3
+¿Cómo cambia la detección de outliers cuando el contexto de los datos sí importa? Más allá
+de los resultados, ¿qué consideraciones adicionales se deben tener en cuenta al analizar 
+outliers contextuales?
+:::
 
 ---
